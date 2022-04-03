@@ -7,9 +7,19 @@ VALUES ('USER', 1),
        ('ADMIN', 2),
        ('USER', 2);
 
-# INSERT INTO RESTAURANTS (name, menu_id)
-#     VALUE ('Metropol', 1),
-#           ('Пельменная', 2),
-#           ('Big fish', 3);
-#
-# INSERT INTO MENUS (name, meal_id)
+INSERT INTO RESTAURANTS (name, address, telephone)
+VALUES ('Metropol', 'Volgograd', '123-456'),
+       ('Пельменная', 'Москва', '+7-999-888-77-66'),
+       ('Big fish', 'пр.Ленина, 1', '(555) 555-55-55');
+
+INSERT INTO MEALS (name, price, restaurant_id)
+VALUES ('Суп1', 500, 1),
+       ('Компот', 30, 1),
+       ('Гречка', 60, 1),
+       ('Котлета', 150, 1),
+       ('Пельмени классические', 200, 2),
+       ('Пельмени для детей', 100, 2),
+       ('Пельмени ассорти', 300, 2),
+       ('Уха осетровая', 1800, 3),
+       ('Стейк из сёмги', 1000, 3),
+       ('Рыба к пиву', 750, 3);

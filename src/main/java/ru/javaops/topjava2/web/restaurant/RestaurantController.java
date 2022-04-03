@@ -22,26 +22,26 @@ public class RestaurantController {
     static final String REST_URL = "api/restaurants";
 
     @Autowired
-    private RestaurantRepository repository;
+    private RestaurantRepository restaurantRepository;
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Optional<Restaurant> get(@PathVariable int id) {
         log.info("get restaurant {}", id);
-        return repository.findById(id);
+        return restaurantRepository.findById(id);
     }
 
     @CacheEvict(value = "restaurants", allEntries = true)
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         log.info("delete restaurant {}", id);
-        repository.deleteExisted(id);
+        restaurantRepository.deleteExisted(id);
     }
 
     @GetMapping
     @Cacheable
     public List<Restaurant> getAll() {
-        return repository.findAll();
+        return restaurantRepository.findAll();
     }
 }
