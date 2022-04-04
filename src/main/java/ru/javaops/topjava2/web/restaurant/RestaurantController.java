@@ -31,7 +31,7 @@ public class RestaurantController {
         return restaurantRepository.findById(id);
     }
 
-    @CacheEvict(value = "restaurants", allEntries = true)
+//    @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -40,7 +40,7 @@ public class RestaurantController {
     }
 
     @GetMapping
-    @Cacheable
+//    @Cacheable
     public List<Restaurant> getAll() {
         return restaurantRepository.findAll();
     }

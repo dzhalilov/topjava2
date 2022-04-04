@@ -9,12 +9,12 @@ import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "meals")
+@Table(name = "dishes")
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Meal extends NamedEntity implements Serializable {
+public class Dish extends NamedEntity implements Serializable {
 
     @Column(name = "price")
     @PositiveOrZero

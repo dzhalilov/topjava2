@@ -1,9 +1,6 @@
 package ru.javaops.topjava2.model;
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -11,7 +8,6 @@ import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
 
 @Entity
 @Table(name = "restaurants")
@@ -33,15 +29,15 @@ public class Restaurant extends NamedEntity implements Serializable {
     @Size(max = 20)
     private String telephone;
 
-//    @CollectionTable(name = "meals",
+//    @CollectionTable(name = "dishes",
 //            joinColumns = @JoinColumn(name = "restaurant_id"))
 //    @Column(name = "menu")
 //    @ElementCollection(fetch = FetchType.EAGER)
 //    @JoinColumn(name = "restaurant_id")
 //    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private Set<Meal> menu;
+//    private Set<Dish> menu;
 
-    public Restaurant(Integer id, String name, String address, String telephone, Collection<Meal> menu) {
+    public Restaurant(Integer id, String name, String address, String telephone, Collection<Dish> menu) {
         super(id, name);
         this.address = address;
         this.telephone = telephone;

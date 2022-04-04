@@ -1,11 +1,15 @@
 package ru.javaops.topjava2.model;
 
 
-import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import java.time.LocalDate;
 
+@Entity
+@Table(name = "votes")
 public class Vote extends BaseEntity {
 
-    private LocalDateTime dateTime;
+    private LocalDate date;
 
     private int restaurant_id;
 
