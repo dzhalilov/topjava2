@@ -14,12 +14,14 @@ spring:
         default_batch_fetch_size: 20
         # https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
         jdbc.batch_size: 20
+    database-platform: org.hibernate.dialect.H2Dialect
   datasource:
     # ImMemory
     url: jdbc:h2:mem:voting
     #    tcp: jdbc:h2:tcp://localhost:9092/mem:voting
     username: sa
     password:
+    driver-class-name: org.h2.Driver
 
   # Jackson Serialization Issue Resolver
   jackson:
@@ -33,6 +35,12 @@ spring:
   cache:
     cache-names: users
     caffeine.spec: maximumSize=1,expireAfterAccess=60s
+
+  # https://www.baeldung.com/spring-boot-h2-database
+  h2:
+    console:
+      enabled: true
+      path: /h2
 
 logging:
   level:

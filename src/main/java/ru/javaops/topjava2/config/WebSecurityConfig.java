@@ -55,5 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().httpBasic()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable();
+        http.headers().frameOptions().sameOrigin(); // for enable h2 console
     }
 }
