@@ -2,9 +2,7 @@ package ru.javaops.topjava2.model;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.PositiveOrZero;
 import java.io.Serializable;
 
@@ -22,5 +20,7 @@ public class Dish extends NamedEntity implements Serializable {
 
     @Column(name = "restaurant_id", nullable = false)
     @NonNull
+//    @ManyToOne
+//    @JoinColumn(name="restaurant_id")
     private int restaurant_id;
 }

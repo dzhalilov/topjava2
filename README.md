@@ -15,3 +15,4 @@
 User:  user@yandex.ru / password
 Admin: admin@gmail.com / admin
 ```
+DBDesign: https://app.dbdesigner.net/designer/schema/514500
