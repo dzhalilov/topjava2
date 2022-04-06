@@ -22,5 +22,5 @@ public class Dish extends NamedEntity implements Serializable {
     @NonNull
 //    @ManyToOne
 //    @JoinColumn(name="restaurant_id")
-    private int restaurant_id;
+    private int restaurantId;
 }
