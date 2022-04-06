@@ -23,7 +23,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 @RequestMapping(value = DishController.REST_URL)
 @Slf4j
 public class DishController {
-    static final String REST_URL = "api/restaurants/{restaurant_id}/dishes";
+    static final String REST_URL = "/api/restaurants/{restaurant_id}/dishes";
 
     @Autowired
     private DishRepository dishRepository;

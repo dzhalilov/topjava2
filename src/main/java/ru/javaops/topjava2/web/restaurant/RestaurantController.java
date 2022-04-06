@@ -27,7 +27,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 
 // Controller for admin
 public class RestaurantController {
-    static final String REST_URL = "api/restaurants";
+    static final String REST_URL = "/api/restaurants";
 
     @Autowired
     private RestaurantRepository restaurantRepository;
