@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.webjars.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 
@@ -27,16 +28,17 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 
 // Controller for admin
 public class RestaurantController {
-    static final String REST_URL = "/api/restaurants";
+    static final String REST_URL = "/api/admin/restaurants";
 
     @Autowired
     private RestaurantRepository restaurantRepository;
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Restaurant> get(@PathVariable int id) {
+    public Restaurant get(@PathVariable int id) {
         log.info("get restaurant {}", id);
-        return restaurantRepository.findById(id);
+        return restaurantRepository.findById(id).orElseThrow( ()->
+                new NotFoundException("No restaurant with id=" + id));
     }
 
 //    @CacheEvict(value = "restaurants", allEntries = true)

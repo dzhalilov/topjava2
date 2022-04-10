@@ -8,19 +8,20 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "dishes")
-@Getter
-@Setter
+@Data
+//@Getter
+//@Setter
 @NoArgsConstructor
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 public class Dish extends NamedEntity implements Serializable {
 
     @Column(name = "price")
     @PositiveOrZero
     private int price;
 
-    @Column(name = "restaurant_id", nullable = false)
+//    @Column(name = "restaurant_id", nullable = false)
     @NonNull
-//    @ManyToOne
-//    @JoinColumn(name="restaurant_id")
-    private int restaurantId;
+    @ManyToOne
+    @JoinColumn(name="restaurant_id")
+    private Restaurant restaurant;
 }

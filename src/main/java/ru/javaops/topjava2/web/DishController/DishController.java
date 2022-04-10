@@ -4,8 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.webjars.NotFoundException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
@@ -23,7 +25,7 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 @RequestMapping(value = DishController.REST_URL)
 @Slf4j
 public class DishController {
-    static final String REST_URL = "/api/restaurants/{restaurant_id}/dishes";
+    static final String REST_URL = "/api/admin/restaurants/{restaurant_id}/dishes";
 
     @Autowired
     private DishRepository dishRepository;
@@ -41,16 +43,20 @@ public class DishController {
         return dishRepository.findAllByRestaurantId(restaurant_id);
     }
 
+//    @GetMapping("/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Dish get(@PathVariable int restaurant_id, @PathVariable int id) {
+//        log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
+//        Dish dish = dishRepository.findById(id).orElse(null);
+//        return (dish != null && dish.getRestaurantId() == restaurant_id) ? dish : null;
+//    }
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Optional<Dish> get(@PathVariable int restaurant_id, @PathVariable int id) {
+    public Dish get(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
-        Optional<Dish> dish = dishRepository.findById(id);
-        if (dish.isPresent() && dish.get().getRestaurantId() == restaurant_id) {
-            return dish;
-        } else {
-            return Optional.empty();
-        }
+        Dish dish = dishRepository.findById(id).orElse(null);
+        return (dish != null && dish.getRestaurant().id() == restaurant_id) ? dish : null;
     }
 
     @PostMapping
@@ -59,7 +65,6 @@ public class DishController {
         if (!restaurantRepository.existsById(restaurant_id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
-        dish.setRestaurantId(restaurant_id);
         Dish created = dishRepository.save(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -82,7 +87,7 @@ public class DishController {
     public void delete(@PathVariable int restaurant_id, @PathVariable int id){
         log.info("delete dish id={} for restaurant id={}", id, restaurant_id);
         Optional<Dish> dish = dishRepository.findById(id);
-        if (dish.isPresent() && dish.get().getRestaurantId() == restaurant_id){
+        if (dish.isPresent() && dish.get().getRestaurant().id() == restaurant_id){
             dishRepository.delete(id);
         }
     }

@@ -61,6 +61,9 @@ public class User extends NamedEntity implements HasIdAndEmail, Serializable {
     @JoinColumn(name = "user_id") //https://stackoverflow.com/a/62848296/548473
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Set<Role> roles;
+//
+//    @OneToOne(cascade = CascadeType.ALL)
+//    private Vote vote;
 
     public User(User u) {
         this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);

@@ -1,6 +1,8 @@
 package ru.javaops.topjava2.model;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
@@ -15,10 +17,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "restaurants")
-@Getter
-@Setter
+@Data
+//@Getter
+//@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+//@ToString
 public class Restaurant extends NamedEntity implements Serializable {
 
     @Serial
@@ -34,18 +37,18 @@ public class Restaurant extends NamedEntity implements Serializable {
     private String telephone;
 
 //    @CollectionTable(name = "dishes", joinColumns = @JoinColumn(name = "restaurant_id"))
-//    @Column(name = "menu")
+    @Column(name = "dishes")
 //    @ElementCollection(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "restaurant_id")
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    @OneToMany(mappedBy = "restaurants")
-//    private Set<Dish> menu;
+    @JoinColumn(name = "restaurant_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<Dish> menu;
 
     public Restaurant(Integer id, String name, String address, String telephone, Collection<Dish> menu) {
         super(id, name);
         this.address = address;
         this.telephone = telephone;
-//        setMenu(menu);
+        setMenu(menu);
     }
 
     public Restaurant(Integer id, String name, String address, String telephone) {
@@ -54,8 +57,16 @@ public class Restaurant extends NamedEntity implements Serializable {
         this.telephone = telephone;
     }
 
-//    public void setMenu(Collection<Meal> menu) {
-//        this.menu = CollectionUtils.isEmpty(menu) ? Set.of() : Set.copyOf(menu);
-//    }
+    public void setMenu(Collection<Dish> menu) {
+        this.menu = CollectionUtils.isEmpty(menu) ? Set.of() : Set.copyOf(menu);
+    }
+
+    public void addDish(Dish dish) {
+        menu.add(dish);
+    }
+
+    public void deleteDish(Dish dish) {
+        menu.remove(dish);
+    }
 }
 
