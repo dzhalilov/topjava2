@@ -9,7 +9,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
+import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.util.JsonUtil;
+import ru.javaops.topjava2.util.RestaurantUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 import ru.javaops.topjava2.web.user.UserTestData;
 
@@ -17,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.javaops.topjava2.util.RestaurantUtil.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 import static ru.javaops.topjava2.web.user.UserTestData.USER_MAIL;
@@ -61,7 +64,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant1, restaurant2, restaurant3));
+                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant3, restaurant1, restaurant2));
     }
 
     @Test
@@ -91,15 +94,15 @@ class RestaurantControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void update() throws Exception {
-        Restaurant updatedRestaurant = getNew();
+        RestaurantTo updatedRestaurantTo = convertFromRestaurant(getNew());
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(updatedRestaurant)))
+                .content(JsonUtil.writeValue(updatedRestaurantTo)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        updatedRestaurant.setId(RESTAURANT1_ID);
-        RESTAURANT_MATCHER.assertMatch(restaurantRepository.getById(RESTAURANT1_ID), updatedRestaurant);
+        updatedRestaurantTo.setId(RESTAURANT1_ID);
+        RESTAURANTTO_MATCHER.assertMatch(convertFromRestaurant(restaurantRepository.getById(RESTAURANT1_ID)), updatedRestaurantTo);
     }
 
     @Test
