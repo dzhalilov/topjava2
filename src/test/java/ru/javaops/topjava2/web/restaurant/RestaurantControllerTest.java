@@ -29,7 +29,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     private RestaurantRepository restaurantRepository;
 
     @Test
-    @WithUserDetails(value = USER_MAIL)
+    @WithUserDetails(value = ADMIN_MAIL)
     void get() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID))
                 .andExpect(status().isOk())
@@ -52,7 +52,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     void deleteByUser() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT1_ID))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -85,7 +85,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     void createByUser() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL)
                 .content(JsonUtil.writeValue(getNew())))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -109,6 +109,6 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(getNew())))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 }
