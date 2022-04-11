@@ -1,5 +1,7 @@
 package ru.javaops.topjava2.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -41,7 +43,9 @@ public class Restaurant extends NamedEntity implements Serializable {
 //    @ElementCollection(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+//    @JsonBackReference
     private Set<Dish> menu;
 
     public Restaurant(Integer id, String name, String address, String telephone, Collection<Dish> menu) {
