@@ -40,9 +40,10 @@ public class RestaurantController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Restaurant> get(@PathVariable int id) {
+    public ResponseEntity<RestaurantTo> get(@PathVariable int id) {
         log.info("get restaurant {}", id);
-        return ResponseEntity.of(restaurantRepository.findById(id));
+        return ResponseEntity.of(restaurantRepository.findById(id)
+                .stream().map(RestaurantUtil::convertFromRestaurant).findFirst());
     }
 
 //    @CacheEvict(value = "restaurants", allEntries = true)
@@ -55,19 +56,20 @@ public class RestaurantController {
 
     @GetMapping
 //    @Cacheable
-    public List<Restaurant> getAll() {
-        return restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
+    public List<RestaurantTo> getAll() {
+        List<Restaurant> restaurants = restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
+        return restaurants.stream().map(RestaurantUtil::convertFromRestaurant).toList();
     }
 
     @PostMapping
-    public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant){
-        log.info("create {}", restaurant);
-        checkNew(restaurant);
-        Restaurant created = restaurantRepository.save(restaurant);
+    public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo){
+        log.info("create {}", restaurantTo);
+        checkNew(restaurantTo);
+        Restaurant created = restaurantRepository.save(RestaurantUtil.createNewFromTo(restaurantTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(RestaurantUtil.convertFromRestaurant(created));
     }
 
     @PutMapping("/{id}")
