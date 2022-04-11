@@ -52,6 +52,7 @@ public class DishController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Transactional
     public Dish get(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
         Dish dish = dishRepository.findById(id).orElse(null);
@@ -76,12 +77,14 @@ public class DishController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@Valid @RequestBody Dish dish, @PathVariable int restaurant_id, @PathVariable int id) {
+    @Transactional
+    public Dish update(@Valid @RequestBody Dish dish, @PathVariable int restaurant_id, @PathVariable int id) {
         log.info("update {} with id={} for restaurant id={}", dish, id, restaurant_id);
-        if (restaurantRepository.existsById(restaurant_id)) {
-            assureIdConsistent(dish, id);
-            dishRepository.save(dish);
-        }
+        Restaurant restaurant = restaurantRepository.getById(restaurant_id);
+        assureIdConsistent(dish, id);
+        dish.setRestaurant(restaurant);
+        dishRepository.save(dish);
+        return dish;
     }
 
     @DeleteMapping("/{id}")

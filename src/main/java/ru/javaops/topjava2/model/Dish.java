@@ -6,37 +6,26 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.PositiveOrZero;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "dishes")
 @Data
-//@Getter
-//@Setter
 @NoArgsConstructor
-//@ToString(callSuper = true)
+@ToString(callSuper = true)
 public class Dish extends NamedEntity {
 
     @Column(name = "price")
     @PositiveOrZero
     private int price;
 
-//    @Column(name = "restaurant_id", nullable = false)
-//    @NonNull
+    @NonNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="restaurant_id")
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
     @JsonBackReference
-//    @JsonManagedReference
     private Restaurant restaurant;
 
-    public Dish(int price, Restaurant restaurant) {
-        this.price = price;
-        this.restaurant = restaurant;
-    }
-
-    public Dish(Integer id, String name, int price, Restaurant restaurant) {
+    public Dish(Integer id, String name, int price) {
         super(id, name);
         this.price = price;
-        this.restaurant = restaurant;
     }
 }
