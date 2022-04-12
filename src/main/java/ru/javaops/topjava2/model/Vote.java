@@ -1,10 +1,7 @@
 package ru.javaops.topjava2.model;
 
 
-import lombok.Data;
-import lombok.NonNull;
-import lombok.ToString;
-import org.hibernate.annotations.Cascade;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,9 +10,12 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Data
 @Table(name = "votes")
 @ToString(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Vote extends BaseEntity {
 
     @Column(name = "date", columnDefinition = "timestamp default now()")

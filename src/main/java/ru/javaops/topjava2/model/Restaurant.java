@@ -1,6 +1,5 @@
 package ru.javaops.topjava2.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -22,7 +21,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true, exclude = {"menu"})
-//@EqualsAndHashCode(callSuper = true)
+//@EqualsAndHashCode(callSuper = true, exclude = "{menu}")
 public class Restaurant extends NamedEntity implements Serializable {
 
     @Serial
@@ -37,7 +36,7 @@ public class Restaurant extends NamedEntity implements Serializable {
     @Size(max = 20)
     private String telephone;
 
-//    @CollectionTable(name = "dishes", joinColumns = @JoinColumn(name = "restaurant_id"))
+    //    @CollectionTable(name = "dishes", joinColumns = @JoinColumn(name = "restaurant_id"))
 //    @Column(name = "dishes")
 //    @ElementCollection(fetch = FetchType.EAGER)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Dish.class)

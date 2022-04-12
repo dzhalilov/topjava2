@@ -4,22 +4,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaops.topjava2.model.Restaurant;
+import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.util.JsonUtil;
-import ru.javaops.topjava2.util.RestaurantUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
-import ru.javaops.topjava2.web.user.UserTestData;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaops.topjava2.util.RestaurantUtil.*;
+import static ru.javaops.topjava2.util.RestaurantUtil.convertFromRestaurant;
+import static ru.javaops.topjava2.web.DishController.DishTestData.DISH1_ID;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 import static ru.javaops.topjava2.web.user.UserTestData.USER_MAIL;
@@ -30,6 +29,9 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Autowired
     private RestaurantRepository restaurantRepository;
+
+    @Autowired
+    private DishRepository dishRepository;
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
@@ -48,6 +50,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(restaurantRepository.findById(RESTAURANT1_ID).isPresent());
+        assertFalse(dishRepository.findById(DISH1_ID).isPresent());
     }
 
     @Test

@@ -9,4 +9,6 @@ import java.util.List;
 public interface DishRepository extends BaseRepository<Dish> {
 
     List<Dish> findAllByRestaurantId(int restaurantId);
+
+    Dish findByIdAndAndRestaurantId(int id, int restaurantId);
 }

@@ -9,8 +9,9 @@ import javax.validation.constraints.PositiveOrZero;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @NoArgsConstructor
-@Data
-public class DishTo extends NamedTo{
+@Getter
+@Setter
+public class DishTo extends NamedTo {
 
     @Column(name = "price")
     @PositiveOrZero

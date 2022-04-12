@@ -27,7 +27,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 @Slf4j
 public class DishController {
     static final String REST_URL = "/api/admin/restaurants/{restaurant_id}/dishes";
-//    static final String REST_URL = "/api/admin/restaurants/{restaurant_id}/dishes";
 
     @Autowired
     private DishRepository dishRepository;
@@ -39,7 +38,6 @@ public class DishController {
     private DishService dishService;
 
     @GetMapping()
-    @ResponseStatus(HttpStatus.OK)
     public List<DishTo> getAllByRestaurantId(@PathVariable int restaurant_id) {
         log.info("get all dishes for restaurant id={}", restaurant_id);
         return dishRepository.findAllByRestaurantId(restaurant_id)
@@ -55,12 +53,12 @@ public class DishController {
 //    }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     @Transactional
-    public DishTo get(@PathVariable int restaurant_id, @PathVariable int id) {
+    public Dish get(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
-        Dish dish = dishRepository.findById(id).orElse(null);
-        return (dish != null && dish.getRestaurant().id() == restaurant_id) ? convertFromDish(dish) : null;
+        return dishRepository.findByIdAndAndRestaurantId(id, restaurant_id);
+//        Dish dish = dishRepository.findById(id).orElse(null);
+//        return (dish != null && dish.getRestaurant().id() == restaurant_id) ? convertFromDish(dish) : null;
     }
 
     @PostMapping
@@ -77,7 +75,7 @@ public class DishController {
         DishTo createdTo = convertFromDish(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(createdTo.getId()).toUri();
+                .buildAndExpand(dish.getRestaurant().getId(), dish.getId()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(createdTo);
     }
 
@@ -91,7 +89,7 @@ public class DishController {
         if (dish == null || dish.getRestaurant().id() != restaurant_id) {
             return null;
         }
-        dish = updateFromTo(dish, dishTo);
+        updateFromTo(dish, dishTo);
         dishRepository.save(dish);
         return dishTo;
     }
@@ -103,7 +101,8 @@ public class DishController {
         log.info("delete dish id={} for restaurant id={}", id, restaurant_id);
         Dish dish = dishRepository.findById(id).orElse(null);
         if (dish != null && dish.getRestaurant().id() == restaurant_id) {
-            dishRepository.delete(id);
+            dishRepository.deleteById(id);
+//            dishRepository.deleteExisted(id);
         }
     }
 }
