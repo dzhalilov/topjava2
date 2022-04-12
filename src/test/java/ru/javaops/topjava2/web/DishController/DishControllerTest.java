@@ -11,6 +11,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
+import ru.javaops.topjava2.to.DishTo;
+import ru.javaops.topjava2.to.RestaurantTo;
+import ru.javaops.topjava2.util.DishUtil;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 import ru.javaops.topjava2.web.restaurant.RestaurantTestData;
@@ -18,6 +21,8 @@ import ru.javaops.topjava2.web.restaurant.RestaurantTestData;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javaops.topjava2.util.DishUtil.convertFromDish;
+import static ru.javaops.topjava2.util.RestaurantUtil.convertFromRestaurant;
 import static ru.javaops.topjava2.web.DishController.DishTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.getNew;
@@ -68,7 +73,18 @@ class DishControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void update() {
+    @WithUserDetails(value = ADMIN_MAIL)
+    void update() throws Exception {
+        DishTo updatedDishTo = convertFromDish(DishTestData.getNew());
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID + DISHES + DISH1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedDishTo)))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        updatedDishTo.setId(DISH1_ID);
+        DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), updatedDishTo);
+//        DISH_MATCHER.assertMatch(dishRepository.getById(DISH1_ID), DishTestData.getUpdated());
     }
 
     @Test

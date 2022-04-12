@@ -7,9 +7,11 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.PositiveOrZero;
 
+//@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "dishes")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
 public class Dish extends NamedEntity {
@@ -27,5 +29,11 @@ public class Dish extends NamedEntity {
     public Dish(Integer id, String name, int price) {
         super(id, name);
         this.price = price;
+    }
+
+    public Dish(Integer id, String name, int price, @NonNull Restaurant restaurant) {
+        super(id, name);
+        this.price = price;
+        this.restaurant = restaurant;
     }
 }

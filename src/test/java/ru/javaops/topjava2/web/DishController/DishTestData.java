@@ -2,11 +2,15 @@ package ru.javaops.topjava2.web.DishController;
 
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
+import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.MatcherFactory;
 import ru.javaops.topjava2.web.restaurant.RestaurantTestData;
 
+import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
+
 public class DishTestData {
     public static final MatcherFactory.Matcher<Dish> DISH_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Dish.class);
+    public static final MatcherFactory.Matcher<DishTo> DISHTO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(DishTo.class);
 
     public static final int DISH1_ID = 1;
     public static final int DISH2_ID = 2;
@@ -20,6 +24,9 @@ public class DishTestData {
 
     public static Dish getNew() {
         return new Dish(null, "New", 999);
+    }
+    public static Dish getUpdated() {
+        return new Dish(1, "New", 999, restaurant1);
     }
 
 }

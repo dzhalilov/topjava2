@@ -17,10 +17,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "restaurants")
-@Data
+//@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true, exclude = {"menu"})
+//@EqualsAndHashCode(callSuper = true)
 public class Restaurant extends NamedEntity implements Serializable {
 
     @Serial
