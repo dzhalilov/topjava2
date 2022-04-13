@@ -11,7 +11,6 @@ import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
-import ru.javaops.topjava2.service.DishService;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.DishUtil;
 
@@ -34,9 +33,6 @@ public class DishController {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
-    @Autowired
-    private DishService dishService;
-
     @GetMapping()
     public List<DishTo> getAllByRestaurantId(@PathVariable int restaurant_id) {
         log.info("get all dishes for restaurant id={}", restaurant_id);
@@ -44,21 +40,12 @@ public class DishController {
                 .stream().map(DishUtil::convertFromDish).toList();
     }
 
-//    @GetMapping("/{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public Dish get(@PathVariable int restaurant_id, @PathVariable int id) {
-//        log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
-//        Dish dish = dishRepository.findById(id).orElse(null);
-//        return (dish != null && dish.getRestaurantId() == restaurant_id) ? dish : null;
-//    }
-
     @GetMapping("/{id}")
     @Transactional
-    public Dish get(@PathVariable int restaurant_id, @PathVariable int id) {
+    public DishTo get(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
-        return dishRepository.findByIdAndAndRestaurantId(id, restaurant_id);
-//        Dish dish = dishRepository.findById(id).orElse(null);
-//        return (dish != null && dish.getRestaurant().id() == restaurant_id) ? convertFromDish(dish) : null;
+        Dish dish = dishRepository.findByIdAndAndRestaurantId(id, restaurant_id);
+        return dish != null ? convertFromDish(dish) : null;
     }
 
     @PostMapping
@@ -102,7 +89,6 @@ public class DishController {
         Dish dish = dishRepository.findById(id).orElse(null);
         if (dish != null && dish.getRestaurant().id() == restaurant_id) {
             dishRepository.deleteById(id);
-//            dishRepository.deleteExisted(id);
         }
     }
 }

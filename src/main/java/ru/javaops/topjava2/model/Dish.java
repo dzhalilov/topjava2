@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 //@EqualsAndHashCode(callSuper = true)
@@ -19,7 +20,7 @@ public class Dish extends NamedEntity {
     @PositiveOrZero
     private int price;
 
-    @NonNull
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
     @JsonBackReference

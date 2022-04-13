@@ -3,16 +3,12 @@ package ru.javaops.topjava2.web.restaurant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.webjars.NotFoundException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
@@ -21,7 +17,6 @@ import ru.javaops.topjava2.util.RestaurantUtil;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
@@ -46,7 +41,7 @@ public class RestaurantController {
                 .stream().map(RestaurantUtil::convertFromRestaurant).findFirst());
     }
 
-//    @CacheEvict(value = "restaurants", allEntries = true)
+    //    @CacheEvict(value = "restaurants", allEntries = true)
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -62,7 +57,7 @@ public class RestaurantController {
     }
 
     @PostMapping
-    public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo){
+    public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
         checkNew(restaurantTo);
         Restaurant created = restaurantRepository.save(RestaurantUtil.createNewFromTo(restaurantTo));
@@ -75,7 +70,7 @@ public class RestaurantController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id){
+    public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
         log.info("update {} with id={}", restaurantTo, id);
         assureIdConsistent(restaurantTo, id);
         Restaurant restaurant = restaurantRepository.getById(id);

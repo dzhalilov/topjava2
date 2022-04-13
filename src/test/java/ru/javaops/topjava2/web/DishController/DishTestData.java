@@ -29,6 +29,9 @@ public class DishTestData {
     public static DishTo getNew() {
         return new DishTo(null, "New", 999);
     }
+    public static DishTo getNewWithWrongData() {
+        return new DishTo(null, "N", 999);
+    }
 
     public static DishTo getNewAfterSaveInRepo() {
         return new DishTo(DISH11_ID, "New", 999);

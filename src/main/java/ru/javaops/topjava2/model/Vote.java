@@ -22,13 +22,13 @@ public class Vote extends BaseEntity {
     @NotNull
     private LocalDate date;
 
-    @NonNull
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
-    @NonNull
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)

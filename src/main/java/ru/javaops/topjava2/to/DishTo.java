@@ -17,10 +17,6 @@ public class DishTo extends NamedTo {
     @PositiveOrZero
     private int price;
 
-    public DishTo(int price) {
-        this.price = price;
-    }
-
     public DishTo(Integer id, String name, int price) {
         super(id, name);
         this.price = price;

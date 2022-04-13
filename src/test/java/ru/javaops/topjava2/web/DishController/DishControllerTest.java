@@ -13,6 +13,7 @@ import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,9 +52,9 @@ class DishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
-    void getWithWrongDishId() throws Exception {
+    void getWithWrongRestaurantId() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID + DISHES + DISH5_ID))
-                .andDo(print())
+//                .andDo(print())
                 .andExpect(content().string(""));
     }
 
@@ -70,7 +71,17 @@ class DishControllerTest extends AbstractControllerTest {
         int newId = createdTo.id();
         newDishTo.setId(newId);
         DISHTO_MATCHER.assertMatch(createdTo, newDishTo);
-        DISHTO_MATCHER.assertMatch(DishUtil.convertFromDish(dishRepository.getById(newId)), getNewAfterSaveInRepo());
+        DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(newId)), getNewAfterSaveInRepo());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createWithWrongDataForDishTo() throws Exception {
+        DishTo newDishTo = DishTestData.getNewWithWrongData();
+        perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT1_ID + DISHES)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newDishTo)))
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
@@ -85,7 +96,20 @@ class DishControllerTest extends AbstractControllerTest {
 
         updatedDishTo.setId(DISH1_ID);
         DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), updatedDishTo);
-        DISH_MATCHER.assertMatch(dishRepository.getById(DISH1_ID), DishTestData.getUpdated());
+        DISHTO_MATCHER.assertMatch(
+                convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(DishTestData.getUpdated()));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateWithWrongDataForDishTo() throws Exception {
+        DishTo updatedDishTo = DishTestData.getNewWithWrongData();
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID + DISHES + DISH1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedDishTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+        DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(dish1));
     }
 
     @Test
@@ -95,5 +119,14 @@ class DishControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
         assertFalse(dishRepository.findById(DISH1_ID).isPresent());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void deleteWithWrongId() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT1_ID + DISHES + DISH5_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        assertTrue(dishRepository.findById(DISH5_ID).isPresent());
     }
 }
