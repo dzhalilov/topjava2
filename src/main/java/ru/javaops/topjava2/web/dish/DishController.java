@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
@@ -18,6 +17,7 @@ import ru.javaops.topjava2.util.DishUtil;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static ru.javaops.topjava2.util.DishUtil.*;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
@@ -57,12 +57,12 @@ public class DishController {
     @Transactional
     public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id) {
         log.info("create {} for restaurant id={}", dishTo, restaurant_id);
-        Restaurant restaurant = restaurantRepository.findById(restaurant_id).orElse(null);
-        if (restaurant == null) {
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurant_id);
+        if (restaurant.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
         Dish dish = createNewFromTo(dishTo);
-        dish.setRestaurant(restaurant);
+        dish.setRestaurant(restaurant.get());
         dishRepository.save(dish);
         DishTo createdTo = convertFromDish(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()

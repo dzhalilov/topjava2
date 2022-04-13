@@ -11,7 +11,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "votes")
-@ToString(callSuper = true)
+//@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,16 +23,29 @@ public class Vote extends BaseEntity {
     private LocalDate date;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "restaurant_id", nullable = false)
     private Restaurant restaurant;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public Vote(Integer id, LocalDate date, Restaurant restaurant, User user) {
+        super(id);
+        this.date = date;
+        this.restaurant = restaurant;
+        this.user = user;
+    }
+//
+//    public Vote(LocalDate date, Restaurant restaurant, User user) {
+//        this.date = date;
+//        this.restaurant = restaurant;
+//        this.user = user;
+//    }
 
     public Vote(Integer id, LocalDate date) {
         super(id);
@@ -41,5 +54,15 @@ public class Vote extends BaseEntity {
 
     public Vote(LocalDate date) {
         this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "Vote{" +
+                "id=" + id +
+                ", date=" + date +
+                ", restaurant=" + (restaurant != null ? restaurant.getId() : null) +
+                ", user=" + (user != null ? user.getId() : null) +
+                '}';
     }
 }
