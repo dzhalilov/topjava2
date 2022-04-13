@@ -1,4 +1,4 @@
-package ru.javaops.topjava2.web.DishController;
+package ru.javaops.topjava2.web.dish;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,19 +6,18 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.to.DishTo;
-import ru.javaops.topjava2.util.DishUtil;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.util.DishUtil.convertFromDish;
-import static ru.javaops.topjava2.web.DishController.DishTestData.*;
+import static ru.javaops.topjava2.web.dish.DishTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 
@@ -54,7 +53,6 @@ class DishControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void getWithWrongRestaurantId() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID + DISHES + DISH5_ID))
-//                .andDo(print())
                 .andExpect(content().string(""));
     }
 

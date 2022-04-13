@@ -1,4 +1,4 @@
-package ru.javaops.topjava2.web.DishController;
+package ru.javaops.topjava2.web.dish;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
@@ -45,6 +46,10 @@ public class DishController {
     public DishTo get(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
         Dish dish = dishRepository.findByIdAndAndRestaurantId(id, restaurant_id);
+//        if (dish == null) {
+//            throw new IllegalRequestDataException("Wrong restaurant or dish");
+//        }
+//        return convertFromDish(dish);
         return dish != null ? convertFromDish(dish) : null;
     }
 

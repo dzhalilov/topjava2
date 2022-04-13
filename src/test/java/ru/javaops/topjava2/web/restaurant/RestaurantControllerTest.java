@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.util.RestaurantUtil.convertFromRestaurant;
-import static ru.javaops.topjava2.web.DishController.DishTestData.DISH1_ID;
+import static ru.javaops.topjava2.web.dish.DishTestData.DISH1_ID;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 import static ru.javaops.topjava2.web.user.UserTestData.USER_MAIL;

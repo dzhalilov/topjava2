@@ -1,4 +1,4 @@
-package ru.javaops.topjava2.web.DishController;
+package ru.javaops.topjava2.web.dish;
 
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.to.DishTo;
