@@ -1,7 +1,10 @@
 package ru.javaops.topjava2.model;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -39,21 +42,6 @@ public class Vote extends BaseEntity {
         this.date = date;
         this.restaurant = restaurant;
         this.user = user;
-    }
-//
-//    public Vote(LocalDate date, Restaurant restaurant, User user) {
-//        this.date = date;
-//        this.restaurant = restaurant;
-//        this.user = user;
-//    }
-
-    public Vote(Integer id, LocalDate date) {
-        super(id);
-        this.date = date;
-    }
-
-    public Vote(LocalDate date) {
-        this.date = date;
     }
 
     @Override

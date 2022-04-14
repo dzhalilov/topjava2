@@ -37,6 +37,7 @@ public class VoteController {
     @GetMapping("/{restaurant_id}")
     @Transactional
     public ResponseEntity<Object> vote(@PathVariable int restaurant_id) {
+        log.info("vote for restaurant id={}", restaurant_id);
         Optional<Restaurant> restaurant = restaurantRepository.findById(restaurant_id);
         if (restaurant.isEmpty()) {
             return new ResponseEntity<>("No restaurant available!", HttpStatus.BAD_REQUEST);
