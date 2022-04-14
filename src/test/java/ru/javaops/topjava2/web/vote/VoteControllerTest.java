@@ -1,6 +1,8 @@
 package ru.javaops.topjava2.web.vote;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -8,10 +10,13 @@ import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
-import static ru.javaops.topjava2.web.user.UserTestData.*;
+import static ru.javaops.topjava2.web.user.UserTestData.USER_ID;
+import static ru.javaops.topjava2.web.user.UserTestData.USER_MAIL;
 import static ru.javaops.topjava2.web.vote.VoteTestData.*;
 
 class VoteControllerTest extends AbstractControllerTest {
@@ -25,6 +30,10 @@ class VoteControllerTest extends AbstractControllerTest {
     void vote() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT2_ID))
                 .andExpect(status().isOk());
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, TODAY.toLocalDate());
+        Vote expected = getVote();
+        expected.setId(actual.getId());
+        assertEquals(expected, actual);
         assertEquals(7, voteRepository.count());
     }
 
@@ -42,33 +51,50 @@ class VoteControllerTest extends AbstractControllerTest {
                 .andExpect(status().isUnauthorized());
         assertEquals(votes, voteRepository.findAll());
     }
-//
-    // TODO: Fix LocalTimeProblem
+
     @Test
     @WithUserDetails(value = USER_MAIL)
     void revoteBeforeEleven() throws Exception {
-//        String instantExpected = "2022-04-04T10:15:30Z";
-//        Clock clock = Clock.fixed(Instant.parse(instantExpected), ZoneId.of("Europe/Moscow"));
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID))
-                .andExpect(status().isOk());
-        assertEquals(7, voteRepository.findAll().size());
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT3_ID))
-                .andExpect(status().isOk());
-        assertEquals(7, voteRepository.findAll().size());
-//        Vote vote = new Vote(vote1.getId(), vote1.getDate(), restaurant3, vote1.getUser());
-//        assertEquals(voteRepository.findById(VOTE1_ID).get(), vote);
+        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
+        expected.setRestaurant(restaurant3);
+        try (MockedStatic<LocalDateTime> dateTimeMockedStatic = Mockito.mockStatic(LocalDateTime.class)) {
+            dateTimeMockedStatic.when(LocalDateTime::now).thenReturn(DATE_TIME_BEFORE_ELEVEN);
+            perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT3_ID))
+                    .andExpect(status().isOk());
+        }
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
+        assertEquals(expected, actual);
+        assertEquals(6, voteRepository.count());
+
     }
 
-    // TODO: Fix LocalTimeProblem
     @Test
     @WithUserDetails(value = USER_MAIL)
     void revoteAfterEleven() throws Exception {
-//        String instantExpected = "2022-04-04T11:15:30Z";
-//        Clock clock = Clock.fixed(Instant.parse(instantExpected), ZoneId.of("Europe/Moscow"));
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID))
-                .andExpect(status().isOk());
-        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT3_ID))
-                .andExpect(status().isNotAcceptable());
-        assertEquals(7, voteRepository.findAll().size());
+        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate());
+        try (MockedStatic<LocalDateTime> dateTimeMockedStatic = Mockito.mockStatic(LocalDateTime.class)) {
+            dateTimeMockedStatic.when(LocalDateTime::now).thenReturn(DATE_TIME_AFTER_ELEVEN);
+            perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT3_ID))
+                    .andExpect(status().isNotAcceptable());
+        }
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate());
+        assertEquals(expected, actual);
+        assertEquals(6, voteRepository.count());
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void revoteOnBoundary() throws Exception {
+        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
+        expected.setRestaurant(restaurant3);
+        try (MockedStatic<LocalDateTime> dateTimeMockedStatic = Mockito.mockStatic(LocalDateTime.class)) {
+            dateTimeMockedStatic.when(LocalDateTime::now).thenReturn(DATE_TIME_ELEVEN);
+            perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT3_ID))
+                    .andExpect(status().isOk());
+        }
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
+        assertEquals(expected, actual);
+        assertEquals(6, voteRepository.count());
+
     }
 }
