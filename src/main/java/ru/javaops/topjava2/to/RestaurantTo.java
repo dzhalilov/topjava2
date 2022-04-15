@@ -1,15 +1,13 @@
 package ru.javaops.topjava2.to;
 
-import lombok.*;
-import ru.javaops.topjava2.HasId;
-import ru.javaops.topjava2.model.Restaurant;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
-//@Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter
@@ -31,11 +29,4 @@ public class RestaurantTo extends NamedTo {
 
     public RestaurantTo() {
     }
-
-//    public static RestaurantTo from(Restaurant restaurant) {
-//        RestaurantTo restaurantTo = new RestaurantTo(restaurant.getId(), restaurant.getName());
-//        restaurantTo.setAddress(restaurant.getAddress());
-//        restaurantTo.setTelephone(restaurant.getTelephone());
-//        return restaurantTo;
-//    }
 }

@@ -26,7 +26,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @Slf4j
 @CacheConfig(cacheNames = "restaurants")
 
-// Controller for admin
 public class RestaurantController {
     static final String REST_URL = "/api/admin/restaurants";
 

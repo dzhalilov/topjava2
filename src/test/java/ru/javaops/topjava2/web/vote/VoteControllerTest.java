@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.vote;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -11,8 +12,10 @@ import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.USER_ID;
@@ -65,7 +68,6 @@ class VoteControllerTest extends AbstractControllerTest {
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
         assertEquals(expected, actual);
         assertEquals(6, voteRepository.count());
-
     }
 
     @Test
@@ -95,6 +97,25 @@ class VoteControllerTest extends AbstractControllerTest {
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
         assertEquals(expected, actual);
         assertEquals(6, voteRepository.count());
+    }
 
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getResultList() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(RESULT_TO_MATCHER.contentJson(resultsWithPopulatedData));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getResultListHundredTimes() throws Exception {
+        Long startTesting = new Date().getTime();
+        for (int i = 0; i < 100; i++) {
+            perform(MockMvcRequestBuilders.get(REST_URL));
+        }
+        Long endTesting = new Date().getTime();
+        Assertions.assertTrue((endTesting - startTesting) < 1000);
     }
 }

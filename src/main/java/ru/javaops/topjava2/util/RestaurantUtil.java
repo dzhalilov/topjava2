@@ -2,10 +2,7 @@ package ru.javaops.topjava2.util;
 
 import lombok.experimental.UtilityClass;
 import ru.javaops.topjava2.model.Restaurant;
-import ru.javaops.topjava2.model.Role;
-import ru.javaops.topjava2.model.User;
 import ru.javaops.topjava2.to.RestaurantTo;
-import ru.javaops.topjava2.to.UserTo;
 
 @UtilityClass
 public class RestaurantUtil {
@@ -22,6 +19,6 @@ public class RestaurantUtil {
     }
 
     public static RestaurantTo convertFromRestaurant(Restaurant restaurant) {
-        return new RestaurantTo (restaurant.getId(), restaurant.getName(), restaurant.getAddress(), restaurant.getTelephone());
+        return new RestaurantTo(restaurant.getId(), restaurant.getName(), restaurant.getAddress(), restaurant.getTelephone());
     }
 }

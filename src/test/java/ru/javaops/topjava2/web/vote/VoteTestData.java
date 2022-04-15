@@ -1,6 +1,9 @@
 package ru.javaops.topjava2.web.vote;
 
 import ru.javaops.topjava2.model.Vote;
+import ru.javaops.topjava2.to.ResultTo;
+import ru.javaops.topjava2.util.RestaurantUtil;
+import ru.javaops.topjava2.web.MatcherFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,6 +14,7 @@ import static ru.javaops.topjava2.web.user.UserTestData.admin;
 import static ru.javaops.topjava2.web.user.UserTestData.user;
 
 public class VoteTestData {
+    public static final MatcherFactory.Matcher<ResultTo> RESULT_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(ResultTo.class);
 
     public static final LocalDateTime TODAY = LocalDateTime.now();
     public static final LocalDateTime DATE_TIME_BEFORE_ELEVEN = LocalDateTime.of(2022, 4, 4, 10, 50);
@@ -36,4 +40,9 @@ public class VoteTestData {
     public static Vote getVote() {
         return new Vote(null, LocalDate.now(), restaurant2, user);
     }
+
+    public static List<ResultTo> resultsWithPopulatedData = List.of(
+            new ResultTo(RestaurantUtil.convertFromRestaurant(restaurant1), 3L),
+            new ResultTo(RestaurantUtil.convertFromRestaurant(restaurant2), 2L),
+            new ResultTo(RestaurantUtil.convertFromRestaurant(restaurant3), 1L));
 }

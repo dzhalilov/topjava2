@@ -16,12 +16,10 @@ import java.util.Set;
 
 @Entity
 @Table(name = "restaurants")
-//@Data
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(callSuper = true, exclude = {"menu"})
-//@EqualsAndHashCode(callSuper = true, exclude = "{menu}")
 public class Restaurant extends NamedEntity implements Serializable {
 
     @Serial
@@ -36,9 +34,6 @@ public class Restaurant extends NamedEntity implements Serializable {
     @Size(max = 20)
     private String telephone;
 
-    //    @CollectionTable(name = "dishes", joinColumns = @JoinColumn(name = "restaurant_id"))
-//    @Column(name = "dishes")
-//    @ElementCollection(fetch = FetchType.EAGER)
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, targetEntity = Dish.class)
     @JoinColumn(name = "restaurant_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -60,14 +55,6 @@ public class Restaurant extends NamedEntity implements Serializable {
 
     public void setMenu(Collection<Dish> menu) {
         this.menu = CollectionUtils.isEmpty(menu) ? Set.of() : Set.copyOf(menu);
-    }
-
-    public void addDish(Dish dish) {
-        menu.add(dish);
-    }
-
-    public void deleteDish(Dish dish) {
-        menu.remove(dish);
     }
 }
 

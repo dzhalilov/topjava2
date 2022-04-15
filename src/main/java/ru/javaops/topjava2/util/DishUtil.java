@@ -18,6 +18,6 @@ public class DishUtil {
     }
 
     public static DishTo convertFromDish(Dish dish) {
-        return new DishTo (dish.getId(), dish.getName(), dish.getPrice());
+        return new DishTo(dish.getId(), dish.getName(), dish.getPrice());
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
@@ -77,12 +78,12 @@ public class DishController {
     public DishTo update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id, @PathVariable int id) {
         log.info("update {} with id={} for restaurant id={}", dishTo, id, restaurant_id);
         assureIdConsistent(dishTo, id);
-        Dish dish = dishRepository.getById(id);
-        if (dish == null || dish.getRestaurant().id() != restaurant_id) {
+        Optional<Dish> dish = dishRepository.findById(id);
+        if (dish.isEmpty() || dish.get().getRestaurant().id() != restaurant_id) {
             return null;
         }
-        updateFromTo(dish, dishTo);
-        dishRepository.save(dish);
+        updateFromTo(dish.get(), dishTo);
+        dishRepository.save(dish.get());
         return dishTo;
     }
 

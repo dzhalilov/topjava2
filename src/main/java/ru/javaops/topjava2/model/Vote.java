@@ -14,7 +14,6 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "votes")
-//@ToString(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
