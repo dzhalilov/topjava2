@@ -13,14 +13,14 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "votes")
+@Table(name = "vote")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 public class Vote extends BaseEntity {
 
-    @Column(name = "date", columnDefinition = "timestamp default now()")
+    @Column(name = "vote_date", columnDefinition = "timestamp default now()")
     @NotNull
     private LocalDate date;
 

@@ -24,18 +24,15 @@ public class VoteController {
     VoteService voteService;
 
     @GetMapping("/{restaurant_id}")
-    @Transactional
     public ResponseEntity<Object> vote(@PathVariable int restaurant_id) {
         log.info("vote for restaurant id={}", restaurant_id);
         return voteService.vote(restaurant_id);
     }
 
     @GetMapping
-    @Transactional(readOnly = true)
     public List<ResultTo> getRestaurantsWithVotes() {
         log.info("get all restaurants with votes");
         return voteService.getAll();
-
     }
 
 

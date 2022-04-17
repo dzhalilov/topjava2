@@ -26,7 +26,4 @@ public class RestaurantTo extends NamedTo {
         this.address = address;
         this.telephone = telephone;
     }
-
-    public RestaurantTo() {
-    }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.User;
 import ru.javaops.topjava2.model.Vote;
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class VoteService {
     private final RestaurantRepository restaurantRepository;
     private final VoteRepository voteRepository;

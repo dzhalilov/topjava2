@@ -19,12 +19,4 @@ public class ResultTo {
     public ResultTo(RestaurantTo restaurantTo) {
         this.restaurantTo = restaurantTo;
     }
-
-    @Override
-    public String toString() {
-        return "ResultTo{ " +
-                "restaurant=" + (restaurantTo != null ? restaurantTo.getId() : null) +
-                ", votes=" + votes +
-                '}';
-    }
 }

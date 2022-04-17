@@ -37,7 +37,7 @@ class VoteControllerTest extends AbstractControllerTest {
         Vote expected = getVote();
         expected.setId(actual.getId());
         assertEquals(expected, actual);
-        assertEquals(7, voteRepository.count());
+        assertEquals(votes.size() + 1, voteRepository.count());
     }
 
     @Test
@@ -67,7 +67,7 @@ class VoteControllerTest extends AbstractControllerTest {
         }
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
         assertEquals(expected, actual);
-        assertEquals(6, voteRepository.count());
+        assertEquals(votes.size(), voteRepository.count());
     }
 
     @Test
@@ -81,7 +81,7 @@ class VoteControllerTest extends AbstractControllerTest {
         }
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate());
         assertEquals(expected, actual);
-        assertEquals(6, voteRepository.count());
+        assertEquals(votes.size(), voteRepository.count());
     }
 
     @Test
@@ -96,7 +96,7 @@ class VoteControllerTest extends AbstractControllerTest {
         }
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
         assertEquals(expected, actual);
-        assertEquals(6, voteRepository.count());
+        assertEquals(votes.size(), voteRepository.count());
     }
 
     @Test

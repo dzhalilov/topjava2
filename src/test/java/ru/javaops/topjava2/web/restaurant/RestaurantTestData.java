@@ -24,6 +24,10 @@ public class RestaurantTestData {
         return new Restaurant(null, "New", "Somewhere", "555-55-55");
     }
 
+    public static Restaurant getNewWithWrongData() {
+        return new Restaurant(null, "New", "", "555-55-55");
+    }
+
     public static Restaurant getUpdated() {
         return new Restaurant(RESTAURANT1_ID, "UpdatedName", "newAddress", "new phone");
     }

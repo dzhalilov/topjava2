@@ -13,7 +13,7 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,6 +87,17 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createWithWrongData() throws Exception {
+        long count = restaurantRepository.count();
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getNewWithWrongData())))
+                .andExpect(status().isUnprocessableEntity());
+        assertEquals(count, restaurantRepository.count());
+    }
+
+    @Test
     @WithUserDetails(value = USER_MAIL)
     void createByUser() throws Exception {
         perform(MockMvcRequestBuilders.post(REST_URL)
@@ -106,6 +117,18 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
         updatedRestaurantTo.setId(RESTAURANT1_ID);
         RESTAURANTTO_MATCHER.assertMatch(convertFromRestaurant(restaurantRepository.getById(RESTAURANT1_ID)), updatedRestaurantTo);
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void updateWithWrongData() throws Exception {
+        RestaurantTo updatedRestaurantTo = convertFromRestaurant(getNewWithWrongData());
+        updatedRestaurantTo.setId(RESTAURANT1_ID);
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(updatedRestaurantTo)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test

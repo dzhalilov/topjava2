@@ -47,10 +47,6 @@ public class DishController {
     public DishTo get(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
         Dish dish = dishRepository.findByIdAndAndRestaurantId(id, restaurant_id);
-//        if (dish == null) {
-//            throw new IllegalRequestDataException("Wrong restaurant or dish");
-//        }
-//        return convertFromDish(dish);
         return dish != null ? convertFromDish(dish) : null;
     }
 
