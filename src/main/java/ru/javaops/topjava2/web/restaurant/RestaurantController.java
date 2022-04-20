@@ -3,8 +3,12 @@ package ru.javaops.topjava2.web.restaurant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +26,9 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsist
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(value = RestaurantController.REST_URL)
+@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @CacheConfig(cacheNames = "restaurants")
-
 public class RestaurantController {
     static final String REST_URL = "/api/admin/restaurants";
 
@@ -40,7 +43,9 @@ public class RestaurantController {
                 .stream().map(RestaurantUtil::convertFromRestaurant).findFirst());
     }
 
-    //    @CacheEvict(value = "restaurants", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "restaurants", allEntries = true),
+            @CacheEvict(cacheNames = "votes", allEntries = true)})
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -49,13 +54,16 @@ public class RestaurantController {
     }
 
     @GetMapping
-//    @Cacheable
+    @Cacheable("restaurants")
     public List<RestaurantTo> getAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
         return restaurants.stream().map(RestaurantUtil::convertFromRestaurant).toList();
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "restaurants", allEntries = true),
+            @CacheEvict(cacheNames = "votes", allEntries = true)})
     public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
         checkNew(restaurantTo);
@@ -66,9 +74,12 @@ public class RestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(RestaurantUtil.convertFromRestaurant(created));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "restaurants", allEntries = true),
+            @CacheEvict(cacheNames = "votes", allEntries = true)})
     public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
         log.info("update {} with id={}", restaurantTo, id);
         assureIdConsistent(restaurantTo, id);

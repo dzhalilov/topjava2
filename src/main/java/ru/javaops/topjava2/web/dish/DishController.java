@@ -3,11 +3,11 @@ package ru.javaops.topjava2.web.dish;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
@@ -25,7 +25,7 @@ import static ru.javaops.topjava2.util.DishUtil.*;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 
 @RestController
-@RequestMapping(value = DishController.REST_URL)
+@RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class DishController {
     static final String REST_URL = "/api/admin/restaurants/{restaurant_id}/dishes";
@@ -51,7 +51,7 @@ public class DishController {
         return dish != null ? convertFromDish(dish) : null;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id) {
         log.info("create {} for restaurant id={}", dishTo, restaurant_id);
@@ -69,7 +69,7 @@ public class DishController {
         return ResponseEntity.created(uriOfNewResource).body(createdTo);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     public DishTo update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id, @PathVariable int id) {
