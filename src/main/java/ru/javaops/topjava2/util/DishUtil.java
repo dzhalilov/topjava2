@@ -8,7 +8,7 @@ import ru.javaops.topjava2.to.DishTo;
 public class DishUtil {
 
     public static Dish createNewFromTo(DishTo dishTo) {
-        return new Dish(null, dishTo.getName(), dishTo.getPrice());
+        return new Dish(null, dishTo.getName(), dishTo.getDate(), dishTo.getPrice());
     }
 
     public static Dish updateFromTo(Dish dish, DishTo dishTo) {
@@ -18,6 +18,6 @@ public class DishUtil {
     }
 
     public static DishTo convertFromDish(Dish dish) {
-        return new DishTo(dish.getId(), dish.getName(), dish.getPrice());
+        return new DishTo(dish.getId(), dish.getName(), dish.getDate(), dish.getPrice());
     }
 }

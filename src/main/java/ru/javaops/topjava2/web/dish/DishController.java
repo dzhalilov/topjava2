@@ -17,6 +17,7 @@ import ru.javaops.topjava2.util.DishUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class DishController {
     @GetMapping()
     public List<DishTo> getAllByRestaurantId(@PathVariable int restaurant_id) {
         log.info("get all dishes for restaurant id={}", restaurant_id);
-        return dishRepository.findAllByRestaurantId(restaurant_id)
+        return dishRepository.findAllByRestaurantIdAndDate(restaurant_id, LocalDate.now())
                 .stream().map(DishUtil::convertFromDish).toList();
     }
 

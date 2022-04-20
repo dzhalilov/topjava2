@@ -6,13 +6,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,11 +65,14 @@ class DishControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(newDishTo)))
                 .andExpect(status().isCreated());
 
-        DishTo createdTo = DISHTO_MATCHER.readFromJson(action);
+        DishTo createdTo = DISH_TO_MATCHER.readFromJson(action);
         int newId = createdTo.id();
         newDishTo.setId(newId);
-        DISHTO_MATCHER.assertMatch(createdTo, newDishTo);
-        DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(newId)), getNewAfterSaveInRepo());
+        DishTo savedDishTo = convertFromDish(dishRepository.getById(newId));
+        DishTo expected = getNewAfterSaveInRepo();
+        expected.setId(savedDishTo.getId());
+        DISH_TO_MATCHER.assertMatch(createdTo, newDishTo);
+        DISH_TO_MATCHER.assertMatch(savedDishTo, expected);
     }
 
     @Test
@@ -93,8 +96,8 @@ class DishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         updatedDishTo.setId(DISH1_ID);
-        DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), updatedDishTo);
-        DISHTO_MATCHER.assertMatch(
+        DISH_TO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), updatedDishTo);
+        DISH_TO_MATCHER.assertMatch(
                 convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(DishTestData.getUpdated()));
     }
 
@@ -107,7 +110,7 @@ class DishControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(updatedDishTo)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity());
-        DISHTO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(dish1));
+        DISH_TO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(dish1));
     }
 
     @Test
