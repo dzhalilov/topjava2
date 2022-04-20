@@ -15,7 +15,9 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "restaurant")
+@Table(name = "restaurant", uniqueConstraints = {
+        @UniqueConstraint(name = "uniqName", columnNames = "name")
+})
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,7 +27,7 @@ public class Restaurant extends NamedEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "address", nullable = false, unique = true)
+    @Column(name = "address", nullable = false)
     @NotBlank
     @Size(max = 100)
     private String address;
