@@ -25,7 +25,7 @@ public class Restaurant extends NamedEntity implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address", nullable = false, unique = true)
     @NotBlank
     @Size(max = 100)
     private String address;

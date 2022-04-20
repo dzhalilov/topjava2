@@ -13,7 +13,9 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "vote")
+@Table(name = "vote", uniqueConstraints = {
+        @UniqueConstraint(name = "oneVotePerDay", columnNames = {"user_id", "vote_date"})},
+        indexes = {@Index(name = "fn_restaurant_id", columnList = "restaurant_id")})
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

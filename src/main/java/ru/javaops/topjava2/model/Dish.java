@@ -13,7 +13,8 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "dish")
+@Table(name = "dish", indexes = {
+        @Index(name = "menuInDate", columnList = "dish_date DESC, restaurant_id")})
 @Getter
 @Setter
 @NoArgsConstructor
