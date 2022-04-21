@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ru.javaops.topjava2.model.Restaurant;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,11 +13,11 @@ import lombok.Setter;
 @Setter
 public class ResultTo {
 
-    private RestaurantTo restaurantTo;
+    private Restaurant restaurant;
 
     private Long votes;
 
-    public ResultTo(RestaurantTo restaurantTo) {
-        this.restaurantTo = restaurantTo;
+    public ResultTo(Restaurant restaurant) {
+        this.restaurant = restaurant;
     }
 }

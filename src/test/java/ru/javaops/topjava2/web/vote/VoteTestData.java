@@ -2,7 +2,6 @@ package ru.javaops.topjava2.web.vote;
 
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.to.ResultTo;
-import ru.javaops.topjava2.util.RestaurantUtil;
 import ru.javaops.topjava2.web.MatcherFactory;
 
 import java.time.LocalDate;
@@ -42,7 +41,7 @@ public class VoteTestData {
     }
 
     public static List<ResultTo> resultsWithPopulatedData = List.of(
-            new ResultTo(RestaurantUtil.convertFromRestaurant(restaurant1), 3L),
-            new ResultTo(RestaurantUtil.convertFromRestaurant(restaurant2), 2L),
-            new ResultTo(RestaurantUtil.convertFromRestaurant(restaurant3), 1L));
+            new ResultTo(restaurant1, 3L),
+            new ResultTo(restaurant2, 2L),
+            new ResultTo(restaurant3, 1L));
 }

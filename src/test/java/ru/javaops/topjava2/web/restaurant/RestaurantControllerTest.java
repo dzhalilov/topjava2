@@ -13,7 +13,8 @@ import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -40,7 +41,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANTTO_MATCHER.contentJson(restaurantTo1));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo1));
     }
 
     @Test
@@ -67,7 +68,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(RESTAURANTTO_MATCHER.contentJson(restaurantTo3, restaurantTo1, restaurantTo2));
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo3, restaurantTo1, restaurantTo2));
     }
 
     @Test
@@ -116,7 +117,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         updatedRestaurantTo.setId(RESTAURANT1_ID);
-        RESTAURANTTO_MATCHER.assertMatch(convertFromRestaurant(restaurantRepository.getById(RESTAURANT1_ID)), updatedRestaurantTo);
+        RESTAURANT_TO_MATCHER.assertMatch(convertFromRestaurant(restaurantRepository.getById(RESTAURANT1_ID)), updatedRestaurantTo);
     }
 
     @Test

@@ -21,7 +21,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(callSuper = true, exclude = {"menu"})
+//@ToString(callSuper = true, exclude = {"menu"})
 public class Restaurant extends NamedEntity implements Serializable {
 
     @Serial

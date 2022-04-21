@@ -22,7 +22,7 @@ import java.util.List;
 @CacheConfig(cacheNames = "votes")
 public class VoteController {
 
-    static final String REST_URL = "/api/profile/votes/api";
+    static final String REST_URL = "/api/profile/votes";
 
     @Autowired
     VoteService voteService;

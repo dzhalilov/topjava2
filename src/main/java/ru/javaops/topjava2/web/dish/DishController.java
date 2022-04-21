@@ -2,6 +2,7 @@ package ru.javaops.topjava2.web.dish;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,7 @@ public class DishController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
     public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id) {
         log.info("create {} for restaurant id={}", dishTo, restaurant_id);
@@ -71,6 +73,7 @@ public class DishController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
     public DishTo update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id, @PathVariable int id) {
         log.info("update {} with id={} for restaurant id={}", dishTo, id, restaurant_id);
@@ -86,6 +89,7 @@ public class DishController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
     public void delete(@PathVariable int restaurant_id, @PathVariable int id) {
         log.info("delete dish id={} for restaurant id={}", id, restaurant_id);
