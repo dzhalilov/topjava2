@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.User;
 import ru.javaops.topjava2.model.Vote;
@@ -36,25 +37,16 @@ public class VoteService {
         this.dishRepository = dishRepository;
     }
 
-//    public List<ResultTo> getAll() {
-//        Map<Integer, Long> votes = voteRepository.findAllRestaurantsAndCount()
-//                .stream()
-//                .collect(Collectors.toMap(v -> (Integer) (v[0]), v -> (Long) v[1]));
-//        return restaurantRepository.findAll()
-//                .stream()
-//                .map(RestaurantUtil::convertFromRestaurant)
-//                .map(ResultTo::new)
-//                .peek(r -> r.setVotes(votes.get(r.getRestaurantTo().getId())))
-//                .toList();
-//    }
-
     public List<ResultTo> getAll() {
+        Map<Integer, List<Dish>> restaurantsMenuMap = dishRepository.findAllByDate(LocalDate.now())
+                .stream()
+                .collect(Collectors.groupingBy(dish -> dish.getRestaurant().getId(), Collectors.toList()));
         Map<Integer, Long> votes = voteRepository.findAllRestaurantsAndCount()
                 .stream()
                 .collect(Collectors.toMap(v -> (Integer) (v[0]), v -> (Long) v[1]));
         return restaurantRepository.findAll()
                 .stream()
-                .peek(r -> r.setMenu(dishRepository.findAllByRestaurantIdAndDate(r.id(), LocalDate.now())))
+                .peek(r -> r.setMenu(restaurantsMenuMap.getOrDefault(r.id(), List.of())))
                 .map(ResultTo::new)
                 .peek(resultTo -> resultTo.setVotes(votes.get(resultTo.getRestaurant().getId())))
                 .toList();

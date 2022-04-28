@@ -18,6 +18,7 @@ import java.util.Set;
 @Table(name = "restaurant", uniqueConstraints = {
         @UniqueConstraint(name = "uniqName", columnNames = "name")
 })
+@NamedEntityGraph(name = "Restaurant.menu", attributeNodes = @NamedAttributeNode("menu"))
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

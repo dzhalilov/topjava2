@@ -12,4 +12,6 @@ public interface DishRepository extends BaseRepository<Dish> {
     List<Dish> findAllByRestaurantIdAndDate(int restaurantId, LocalDate date);
 
     Dish findByIdAndAndRestaurantId(int id, int restaurantId);
+
+    List<Dish> findAllByDate(LocalDate date);
 }
