@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
@@ -31,16 +32,17 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 @CacheConfig(cacheNames = "restaurants")
 public class RestaurantController {
     static final String REST_URL = "/api/admin/restaurants";
+    public static final String RESTAURANT_NOT_FOUND = "Restaurant not found";
 
     @Autowired
     private RestaurantRepository restaurantRepository;
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<RestaurantTo> get(@PathVariable int id) {
+    public RestaurantTo get(@PathVariable int id) {
         log.info("get restaurant {}", id);
-        return ResponseEntity.of(restaurantRepository.findById(id)
-                .stream().map(RestaurantUtil::convertFromRestaurant).findFirst());
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
+        return RestaurantUtil.convertFromRestaurant(restaurant);
     }
 
     @Caching(evict = {

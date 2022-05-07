@@ -1,7 +1,6 @@
 package ru.javaops.topjava2.model;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,15 +13,14 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "vote", uniqueConstraints = {
-        @UniqueConstraint(name = "oneVotePerDay", columnNames = {"user_id", "vote_date"})},
+        @UniqueConstraint(name = "one_vote_per_day", columnNames = {"user_id", "vote_date"})},
         indexes = {@Index(name = "fn_restaurant_id", columnList = "restaurant_id")})
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 public class Vote extends BaseEntity {
 
-    @Column(name = "vote_date", columnDefinition = "timestamp default now()")
+    @Column(name = "vote_date", columnDefinition = "date default now()", nullable = false)
     @NotNull
     private LocalDate date;
 

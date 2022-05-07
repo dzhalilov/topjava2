@@ -28,37 +28,37 @@ public class DishTestData {
     public static final LocalDate TODAY = LocalDate.now();
 
 
-    public static final Dish dish1 = new Dish(DISH1_ID, "Суп1", TODAY, 500);
-    public static final Dish dish2 = new Dish(DISH2_ID, "Компот", TODAY, 30);
-    public static final Dish dish3 = new Dish(DISH3_ID, "Гречка", TODAY, 60);
-    public static final Dish dish4 = new Dish(DISH4_ID, "Котлета", TODAY, 150);
+    public static final Dish dish1 = new Dish(DISH1_ID, "Суп1", TODAY, 50000);
+    public static final Dish dish2 = new Dish(DISH2_ID, "Компот", TODAY, 3000);
+    public static final Dish dish3 = new Dish(DISH3_ID, "Гречка", TODAY, 6000);
+    public static final Dish dish4 = new Dish(DISH4_ID, "Котлета", TODAY, 15000);
 
-    public static final Dish dish5 = new Dish(DISH5_ID, "Пельмени классические", TODAY, 200);
-    public static final Dish dish6 = new Dish(DISH6_ID, "Пельмени для детей", TODAY, 100);
-    public static final Dish dish7 = new Dish(DISH7_ID, "Пельмени ассорти", TODAY, 300);
+    public static final Dish dish5 = new Dish(DISH5_ID, "Пельмени классические", TODAY, 20000);
+    public static final Dish dish6 = new Dish(DISH6_ID, "Пельмени для детей", TODAY, 10000);
+    public static final Dish dish7 = new Dish(DISH7_ID, "Пельмени ассорти", TODAY, 30000);
 
-    public static final Dish dish8 = new Dish(DISH8_ID, "Уха осетровая", TODAY, 1800);
-    public static final Dish dish9 = new Dish(DISH9_ID, "Пельмени классические", TODAY, 1000);
-    public static final Dish dish10 = new Dish(DISH10_ID, "Пельмени классические", TODAY, 750);
+    public static final Dish dish8 = new Dish(DISH8_ID, "Уха осетровая", TODAY, 180000);
+    public static final Dish dish9 = new Dish(DISH9_ID, "Пельмени классические", TODAY, 100000);
+    public static final Dish dish10 = new Dish(DISH10_ID, "Пельмени классические", TODAY, 75000);
 
     public static final Set<Dish> menu1 = Set.of(dish1, dish2, dish3, dish4);
     public static final Set<Dish> menu2 = Set.of(dish5, dish6, dish7);
     public static final Set<Dish> menu3 = Set.of(dish8, dish9, dish10);
 
     public static DishTo getNew() {
-        return new DishTo(null, "New", TODAY, 999);
+        return new DishTo(null, "New", TODAY, 99900);
     }
 
     public static DishTo getNewWithWrongData() {
-        return new DishTo(null, "N", TODAY, 999);
+        return new DishTo(null, "N", TODAY, 99900);
     }
 
     public static DishTo getNewAfterSaveInRepo() {
-        return new DishTo(DISH11_ID, "New", TODAY, 999);
+        return new DishTo(DISH11_ID, "New", TODAY, 99900);
     }
 
     public static Dish getUpdated() {
-        return new Dish(DISH1_ID, "New", TODAY, 999, restaurant1);
+        return new Dish(DISH1_ID, "New", TODAY, 99900, restaurant1);
     }
 
 }

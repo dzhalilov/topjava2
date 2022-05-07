@@ -6,19 +6,22 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.util.DishUtil.convertFromDish;
 import static ru.javaops.topjava2.web.dish.DishTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
+import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.WRONG_RESTAURANT_ID;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 
 class DishControllerTest extends AbstractControllerTest {
@@ -53,7 +56,10 @@ class DishControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void getWithWrongRestaurantId() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID + DISHES + DISH5_ID))
-                .andExpect(content().string(""));
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalRequestDataException))
+                .andExpect(result -> assertEquals(DishController.DISH_NOT_FOUND,
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
@@ -82,6 +88,13 @@ class DishControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT1_ID + DISHES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDishTo)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createWithWrongRestaurantId() throws Exception {
+        perform(MockMvcRequestBuilders.post(REST_URL + WRONG_RESTAURANT_ID + DISHES))
                 .andExpect(status().isUnprocessableEntity());
     }
 

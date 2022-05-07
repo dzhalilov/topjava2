@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.DishRepository;
@@ -24,12 +25,14 @@ import java.util.Optional;
 
 import static ru.javaops.topjava2.util.DishUtil.*;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
+import static ru.javaops.topjava2.web.restaurant.RestaurantController.RESTAURANT_NOT_FOUND;
 
 @RestController
 @RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 public class DishController {
-    static final String REST_URL = "/api/admin/restaurants/{restaurant_id}/dishes";
+    static final String REST_URL = "/api/admin/restaurants/{restaurantId}/dishes";
+    static final String DISH_NOT_FOUND = "Dish not found";
 
     @Autowired
     private DishRepository dishRepository;
@@ -37,32 +40,33 @@ public class DishController {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
-    @GetMapping()
-    public List<DishTo> getAllByRestaurantId(@PathVariable int restaurant_id) {
-        log.info("get all dishes for restaurant id={}", restaurant_id);
-        return dishRepository.findAllByRestaurantIdAndDate(restaurant_id, LocalDate.now())
+    @GetMapping
+    public List<DishTo> getAllByRestaurantId(@PathVariable int restaurantId) {
+        log.info("get all dishes for restaurant id={}", restaurantId);
+        return dishRepository.findAllByRestaurantIdAndDate(restaurantId, LocalDate.now())
                 .stream().map(DishUtil::convertFromDish).toList();
     }
 
     @GetMapping("/{id}")
-    @Transactional
-    public DishTo get(@PathVariable int restaurant_id, @PathVariable int id) {
-        log.info("get dish with id={} for restaurant id={}", id, restaurant_id);
-        Dish dish = dishRepository.findByIdAndAndRestaurantId(id, restaurant_id);
-        return dish != null ? convertFromDish(dish) : null;
+    public DishTo get(@PathVariable int restaurantId, @PathVariable int id) {
+        log.info("get dish with id={} for restaurant id={}", id, restaurantId);
+        Dish dish = dishRepository.findByIdAndAndRestaurantId(id, restaurantId)
+                .orElseThrow(() -> new IllegalRequestDataException(DISH_NOT_FOUND));
+        return convertFromDish(dish);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
-    public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id) {
-        log.info("create {} for restaurant id={}", dishTo, restaurant_id);
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurant_id);
-        if (restaurant.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+    public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId) {
+        log.info("create {} for restaurant id={}", dishTo, restaurantId);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
+//        if (restaurant.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
         Dish dish = createNewFromTo(dishTo);
-        dish.setRestaurant(restaurant.get());
+        dish.setRestaurant(restaurant);
         dishRepository.save(dish);
         DishTo createdTo = convertFromDish(dish);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -75,11 +79,11 @@ public class DishController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
-    public DishTo update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurant_id, @PathVariable int id) {
-        log.info("update {} with id={} for restaurant id={}", dishTo, id, restaurant_id);
+    public DishTo update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId, @PathVariable int id) {
+        log.info("update {} with id={} for restaurant id={}", dishTo, id, restaurantId);
         assureIdConsistent(dishTo, id);
         Optional<Dish> dish = dishRepository.findById(id);
-        if (dish.isEmpty() || dish.get().getRestaurant().id() != restaurant_id) {
+        if (dish.isEmpty() || dish.get().getRestaurant().id() != restaurantId) {
             return null;
         }
         updateFromTo(dish.get(), dishTo);
@@ -91,10 +95,10 @@ public class DishController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
-    public void delete(@PathVariable int restaurant_id, @PathVariable int id) {
-        log.info("delete dish id={} for restaurant id={}", id, restaurant_id);
+    public void delete(@PathVariable int restaurantId, @PathVariable int id) {
+        log.info("delete dish id={} for restaurant id={}", id, restaurantId);
         Dish dish = dishRepository.findById(id).orElse(null);
-        if (dish != null && dish.getRestaurant().id() == restaurant_id) {
+        if (dish != null && dish.getRestaurant().id() == restaurantId) {
             dishRepository.deleteById(id);
         }
     }

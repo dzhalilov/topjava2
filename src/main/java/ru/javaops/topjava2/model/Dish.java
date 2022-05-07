@@ -1,59 +1,49 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import ru.javaops.topjava2.util.validation.NoHtml;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "dish", indexes = {
-        @Index(name = "menuInDate", columnList = "dish_date DESC, restaurant_id")})
+@Table(name = "dish", indexes = @Index(name = "menu_date", columnList = "dish_date DESC, restaurant_id"),
+        uniqueConstraints = @UniqueConstraint(name = "uniq_name_date", columnNames = {"dish_date", "name"}))
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Dish extends BaseEntity {
+public class Dish extends NamedEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", referencedColumnName = "id", nullable = false)
     @JsonBackReference
+    @ToString.Exclude
     private Restaurant restaurant;
 
-    @Column(name = "dish_date")
+    @Column(name = "dish_date", nullable = false)
     @NotNull
-    @CreatedDate
-    LocalDate date;
+    private LocalDate date;
 
-    @NotBlank
-    @Size(min = 2, max = 100)
-    @Column(name = "name", nullable = false)
-    @NoHtml
-    protected String name;
-
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
+    @NotNull
     @PositiveOrZero
     private int price;
 
-    public Dish(Integer id, String name, LocalDate date, int price) {
-        super(id);
-        this.name = name;
-        this.date = date;
-        this.price = price;
-    }
-
-    public Dish(Integer id, String name, LocalDate date, int price, @NonNull Restaurant restaurant) {
-        super(id);
-        this.name = name;
+    public Dish(Integer id, String name, LocalDate date, int price, Restaurant restaurant) {
+        super(id, name);
         this.date = date;
         this.price = price;
         this.restaurant = restaurant;
+    }
+
+    public Dish(Integer id, String name, LocalDate date, int price) {
+        this(id, name, date, price, null);
     }
 }
