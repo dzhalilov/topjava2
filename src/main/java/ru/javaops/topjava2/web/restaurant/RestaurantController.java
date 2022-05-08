@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,6 +37,7 @@ public class RestaurantController {
     private RestaurantRepository restaurantRepository;
 
     @GetMapping("/{id}")
+    @Cacheable
     public RestaurantTo get(@PathVariable int id) {
         log.info("get restaurant {}", id);
         Restaurant restaurant = restaurantRepository.findById(id)
@@ -45,9 +45,7 @@ public class RestaurantController {
         return RestaurantUtil.convertFromRestaurant(restaurant);
     }
 
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "restaurants", allEntries = true),
-            @CacheEvict(cacheNames = "votes", allEntries = true)})
+    @CacheEvict(cacheNames = "restaurants", allEntries = true)
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -56,16 +54,14 @@ public class RestaurantController {
     }
 
     @GetMapping
-    @Cacheable("restaurants")
+    @Cacheable
     public List<RestaurantTo> getAll() {
         List<Restaurant> restaurants = restaurantRepository.findAll(Sort.by(Sort.Direction.ASC, "name", "address"));
         return restaurants.stream().map(RestaurantUtil::convertFromRestaurant).toList();
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "restaurants", allEntries = true),
-            @CacheEvict(cacheNames = "votes", allEntries = true)})
+    @CacheEvict(cacheNames = "restaurants", allEntries = true)
     public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
         checkNew(restaurantTo);
@@ -79,9 +75,7 @@ public class RestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    @Caching(evict = {
-            @CacheEvict(cacheNames = "restaurants", allEntries = true),
-            @CacheEvict(cacheNames = "votes", allEntries = true)})
+    @CacheEvict(cacheNames = "restaurants", allEntries = true)
     public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
         log.info("update {} with id={}", restaurantTo, id);
         assureIdConsistent(restaurantTo, id);

@@ -13,11 +13,10 @@ import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.ResultTo;
-import ru.javaops.topjava2.util.VoteUtil;
-import ru.javaops.topjava2.web.SecurityUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,6 +25,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class VoteService {
+    public static final LocalTime TIME_BEFORE_CAN_REVOTE = LocalTime.of(11, 0);
+
     private final RestaurantRepository restaurantRepository;
     private final VoteRepository voteRepository;
     private final DishRepository dishRepository;
@@ -46,18 +47,19 @@ public class VoteService {
                 .collect(Collectors.toMap(v -> (Integer) (v[0]), v -> (Long) v[1]));
         return restaurantRepository.findAll()
                 .stream()
-                .peek(r -> r.setMenu(restaurantsMenuMap.getOrDefault(r.id(), List.of())))
-                .map(ResultTo::new)
-                .peek(resultTo -> resultTo.setVotes(votes.get(resultTo.getRestaurant().getId())))
+                .map(r -> {
+                    r.setMenu(restaurantsMenuMap.getOrDefault(r.id(), List.of()));
+                    return new ResultTo(r, votes.get(r.getId()));
+                })
                 .toList();
     }
 
-    public ResponseEntity<Object> vote(int restaurantId) {
+    @Transactional
+    public ResponseEntity<Object> vote(int restaurantId, User user) {
         Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
         if (restaurant.isEmpty()) {
             return new ResponseEntity<>("No restaurant available!", HttpStatus.BAD_REQUEST);
         }
-        User user = SecurityUtil.authUser();
         LocalDateTime dateTime = LocalDateTime.now();
         Vote vote = voteRepository.findByUserIdAndDate(user.id(), dateTime.toLocalDate());
         if (vote == null) {
@@ -65,7 +67,7 @@ public class VoteService {
             voteRepository.save(vote);
             return new ResponseEntity<>("Your vote was counted.", HttpStatus.OK);
         }
-        if (dateTime.toLocalTime().isAfter(VoteUtil.TIME_BEFORE_CAN_REVOTE)) {
+        if (dateTime.toLocalTime().isAfter(TIME_BEFORE_CAN_REVOTE)) {
             return new ResponseEntity<>("Too late, vote can't be changed!", HttpStatus.NOT_ACCEPTABLE);
         } else {
             vote.setRestaurant(restaurant.get());

@@ -2,12 +2,15 @@ package ru.javaops.topjava2.web.dish;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
@@ -30,9 +33,11 @@ import static ru.javaops.topjava2.web.restaurant.RestaurantController.RESTAURANT
 @RestController
 @RequestMapping(value = DishController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
+@CacheConfig(cacheNames = "dishes")
 public class DishController {
     static final String REST_URL = "/api/admin/restaurants/{restaurantId}/dishes";
     static final String DISH_NOT_FOUND = "Dish not found";
+    static final String WRONG_RESTAURANT_ID_OR_DISH_ID = "Wrong restaurant id or dish id";
 
     @Autowired
     private DishRepository dishRepository;
@@ -41,6 +46,7 @@ public class DishController {
     private RestaurantRepository restaurantRepository;
 
     @GetMapping
+    @Cacheable
     public List<DishTo> getAllByRestaurantId(@PathVariable int restaurantId) {
         log.info("get all dishes for restaurant id={}", restaurantId);
         return dishRepository.findAllByRestaurantIdAndDate(restaurantId, LocalDate.now())
@@ -48,6 +54,7 @@ public class DishController {
     }
 
     @GetMapping("/{id}")
+    @Cacheable
     public DishTo get(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("get dish with id={} for restaurant id={}", id, restaurantId);
         Dish dish = dishRepository.findByIdAndAndRestaurantId(id, restaurantId)
@@ -56,15 +63,20 @@ public class DishController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
+    @CacheEvict(cacheNames = "dishes", allEntries = true)
     public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId) {
         log.info("create {} for restaurant id={}", dishTo, restaurantId);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
+        if (!restaurantRepository.existsById(restaurantId)) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, RESTAURANT_NOT_FOUND);
+        }
+//        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+//                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
 //        if (restaurant.isEmpty()) {
 //            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 //        }
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(restaurantId);
         Dish dish = createNewFromTo(dishTo);
         dish.setRestaurant(restaurant);
         dishRepository.save(dish);
@@ -77,29 +89,25 @@ public class DishController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(cacheNames = "votes", allEntries = true)
     @Transactional
-    public DishTo update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId, @PathVariable int id) {
+    @CacheEvict(cacheNames = "dishes", allEntries = true)
+    public void update(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId, @PathVariable int id) {
         log.info("update {} with id={} for restaurant id={}", dishTo, id, restaurantId);
         assureIdConsistent(dishTo, id);
         Optional<Dish> dish = dishRepository.findById(id);
-        if (dish.isEmpty() || dish.get().getRestaurant().id() != restaurantId) {
-            return null;
+        if (dish.isPresent() && dish.get().getRestaurant().getId() == restaurantId) {
+            updateFromTo(dish.get(), dishTo);
+            dishRepository.save(dish.get());
+        } else {
+            throw new IllegalRequestDataException(WRONG_RESTAURANT_ID_OR_DISH_ID);
         }
-        updateFromTo(dish.get(), dishTo);
-        dishRepository.save(dish.get());
-        return dishTo;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict(cacheNames = "votes", allEntries = true)
-    @Transactional
+    @CacheEvict(cacheNames = "dishes", allEntries = true)
     public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("delete dish id={} for restaurant id={}", id, restaurantId);
-        Dish dish = dishRepository.findById(id).orElse(null);
-        if (dish != null && dish.getRestaurant().id() == restaurantId) {
-            dishRepository.deleteById(id);
-        }
+        dishRepository.deleteByIdAndRestaurantId(id, restaurantId);
     }
 }

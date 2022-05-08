@@ -30,6 +30,7 @@ class VoteControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_MAIL)
     void vote() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT2_ID))
+                .andDo(print())
                 .andExpect(status().isOk());
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, TODAY.toLocalDate());
         Vote expected = getVote();
@@ -42,6 +43,7 @@ class VoteControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = USER_MAIL)
     void voteForWrongRestaurantId() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + WRONG_RESTAURANT_ID))
+                .andDo(print())
                 .andExpect(status().isBadRequest());
         assertEquals(votes, voteRepository.findAll());
     }

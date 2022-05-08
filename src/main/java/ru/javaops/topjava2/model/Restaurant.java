@@ -20,7 +20,7 @@ import java.util.Set;
 //@NamedEntityGraph(name = "Restaurant.menu", attributeNodes = @NamedAttributeNode("menu"))
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @ToString(callSuper = true)
 public class Restaurant extends NamedEntity {
 

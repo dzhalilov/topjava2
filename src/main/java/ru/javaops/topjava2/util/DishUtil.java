@@ -14,6 +14,7 @@ public class DishUtil {
     public static Dish updateFromTo(Dish dish, DishTo dishTo) {
         dish.setName(dishTo.getName());
         dish.setPrice(dishTo.getPrice());
+        dish.setDate(dishTo.getDate());
         return dish;
     }
 

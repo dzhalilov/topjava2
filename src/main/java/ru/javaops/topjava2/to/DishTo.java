@@ -16,8 +16,7 @@ import java.time.LocalDate;
 public class DishTo extends NamedTo {
 
     @NotNull
-    @CreatedDate
-    LocalDate date;
+    private LocalDate date;
 
     @PositiveOrZero
     private int price;

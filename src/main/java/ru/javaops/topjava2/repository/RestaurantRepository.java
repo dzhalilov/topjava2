@@ -11,7 +11,7 @@ import java.util.List;
 public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
 //    @EntityGraph(attributePaths = {"menu"}, type = EntityGraph.EntityGraphType.LOAD)
-    @EntityGraph(value = "Restaurant.menu")
-    @Query("SELECT r FROM Restaurant r, Dish d WHERE d.date = current_date")
-    List<Restaurant> getAllWithMenuForToday();
+//    @EntityGraph(value = "Restaurant.menu")
+//    @Query("SELECT r FROM Restaurant r, Dish d WHERE d.date = current_date")
+//    List<Restaurant> getAllWithMenuForToday();
 }

@@ -30,6 +30,7 @@ public class AdminUserController extends AbstractUserController {
 
     @Override
     @GetMapping("/{id}")
+    @Cacheable
     public ResponseEntity<User> get(@PathVariable int id) {
         return super.get(id);
     }
@@ -42,7 +43,6 @@ public class AdminUserController extends AbstractUserController {
     }
 
     @GetMapping
-    @Cacheable("users")
     public List<User> getAll() {
         log.info("getAll");
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
