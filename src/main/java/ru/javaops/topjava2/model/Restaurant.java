@@ -1,7 +1,10 @@
 package ru.javaops.topjava2.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
@@ -41,6 +44,10 @@ public class Restaurant extends NamedEntity {
     @JsonManagedReference
     @ToString.Exclude
     private Set<Dish> menu;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "restaurant")
+    @ToString.Exclude
+    private Set<Vote> vote;
 
     public Restaurant(Integer id, String name, String address, String telephone, Collection<Dish> menu) {
         super(id, name);

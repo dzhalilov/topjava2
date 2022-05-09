@@ -30,6 +30,8 @@ import static ru.javaops.topjava2.web.user.UserTestData.USER_MAIL;
 class RestaurantControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = RestaurantController.REST_URL + '/';
+    private static final String REST_URL_FOR_USER = RestaurantController.REST_URL_FOR_USER + '/';
+    private static final String REST_URL_MENU = "/menu";
 
     @Autowired
     private RestaurantRepository restaurantRepository;
@@ -45,6 +47,26 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo1));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getForUser() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_FOR_USER + RESTAURANT1_ID))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo1));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getWithMenuForUser() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_FOR_USER + RESTAURANT1_ID + REST_URL_MENU))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RESTAURANT_MATCHER.contentJson(restaurant1));
     }
 
     @Test
@@ -69,6 +91,15 @@ class RestaurantControllerTest extends AbstractControllerTest {
     @WithUserDetails(value = ADMIN_MAIL)
     void getAll() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo3, restaurantTo1, restaurantTo2));
+    }
+
+    @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getAllForUser() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL_FOR_USER))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(RESTAURANT_TO_MATCHER.contentJson(restaurantTo3, restaurantTo1, restaurantTo2));

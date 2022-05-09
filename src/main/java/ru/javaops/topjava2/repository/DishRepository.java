@@ -2,7 +2,6 @@ package ru.javaops.topjava2.repository;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.topjava2.model.Dish;
 
@@ -13,7 +12,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface DishRepository extends BaseRepository<Dish> {
 
-    @Query("select d from Dish d where d.restaurant.id = ?1 and d.date = ?2")
+    @Query("select d from Dish d where d.restaurant.id = ?1 and d.date = ?2 order by d.name")
     List<Dish> findAllByRestaurantIdAndDate(int restaurantId, LocalDate date);
 
     @Query("select d from Dish d where d.id = ?1 and d.restaurant.id = ?2")

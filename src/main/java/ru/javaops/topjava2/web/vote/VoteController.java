@@ -2,41 +2,70 @@ package ru.javaops.topjava2.web.vote;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.javaops.topjava2.model.Restaurant;
+import ru.javaops.topjava2.repository.RestaurantRepository;
+import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.service.VoteService;
+import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.to.ResultTo;
+import ru.javaops.topjava2.util.RestaurantUtil;
 import ru.javaops.topjava2.web.AuthUser;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = VoteController.REST_URL)
 @Slf4j
 public class VoteController {
 
-    static final String REST_URL = "/api/profile/votes";
+    static final String REST_URL = "/api/restaurants";
+    static final String REST_VOTES = "/votes";
+    static final String REST_VOTE = "/vote";
+    static final String REST_RESULTS = "/results";
 
     @Autowired
     private VoteService voteService;
 
-    @GetMapping("/{restaurant_id}")
-    public ResponseEntity<Object> vote(@PathVariable int restaurant_id, @AuthenticationPrincipal AuthUser authUser) {
-        log.info("vote for restaurant id={} by user={}", restaurant_id, authUser);
-        return voteService.vote(restaurant_id, authUser.getUser());
+    @Autowired
+    private VoteRepository voteRepository;
+
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
+    @PostMapping("/{restaurantId}" + REST_VOTES)
+    public ResponseEntity<String> vote(@PathVariable int restaurantId, @AuthenticationPrincipal AuthUser authUser) {
+        log.info("vote for restaurant id={} by user={}", restaurantId, authUser);
+        return voteService.vote(restaurantId, authUser.getUser());
     }
 
-    @GetMapping
-    public List<ResultTo> getRestaurantsWithVotes() {
-        log.info("get all restaurants with votes");
-        return voteService.getAll();
+    @GetMapping("/{restaurantId}" + REST_VOTES)
+    public Integer getVotesForRestaurantId(@PathVariable int restaurantId, @RequestParam @Nullable LocalDate date) {
+        log.info("get votes for restaurant id={} for date={}", restaurantId, date);
+        date = Objects.requireNonNullElseGet(date, LocalDate::now);
+        return voteRepository.getCountVotesByRestaurantIdAndDate(restaurantId, date);
+    }
+
+    @GetMapping(value = REST_RESULTS, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<ResultTo> getVotes(@RequestParam @Nullable LocalDate date) {
+        log.info("get all votes for date={}", date);
+        date = Objects.requireNonNullElseGet(date, LocalDate::now);
+        return voteService.findAllByDateWithVotes(date);
+    }
+
+    @GetMapping(value = REST_VOTE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public RestaurantTo getRestaurantThatUserVotedFor(@RequestParam @Nullable LocalDate date,
+                                                      @AuthenticationPrincipal AuthUser authUser) {
+        log.info("get restaurant for date={} for user={}", date, authUser);
+        date = Objects.requireNonNullElseGet(date, LocalDate::now);
+        Optional<Restaurant> restaurantOptional = restaurantRepository.getByDateAndUserId(date, authUser.getUser().getId());
+        return restaurantOptional.map(RestaurantUtil::convertFromRestaurant).orElse(null);
     }
 }

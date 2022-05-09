@@ -39,7 +39,7 @@ class DishControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(DISH_MATCHER.contentJson(dish1, dish2, dish3, dish4));
+                .andExpect(DISH_MATCHER.contentJson(dish3, dish2, dish4, dish1));
     }
 
     @Test

@@ -1,23 +1,23 @@
 package ru.javaops.topjava2.to;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.javaops.topjava2.model.Restaurant;
 
-@AllArgsConstructor
 @Getter
 @Setter
 @ToString
-public class ResultTo {
+public class ResultTo extends NamedTo {
 
-    private Restaurant restaurant;
-
+    private String address;
+    private String telephone;
     private Long votes;
 
-    public ResultTo(Restaurant restaurant) {
-        this.restaurant = restaurant;
+    public ResultTo(int id, String name, String address, String telephone, Long votes) {
+        super(id, name);
+        this.address = address;
+        this.telephone = telephone;
+        this.votes = votes;
     }
 }
