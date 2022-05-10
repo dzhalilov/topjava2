@@ -53,6 +53,7 @@ public class RestaurantController extends AbstractRestaurantController {
     }
 
     @GetMapping(value = REST_URL_FOR_USER + "/{id}/menu")
+    @Cacheable
     public Restaurant getWithMenuForUser(@PathVariable int id, @RequestParam @Nullable LocalDate date) {
         log.info("get restaurant {} with menu", id);
         date = Objects.requireNonNullElseGet(date, LocalDate::now);

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
@@ -31,6 +32,8 @@ public class VoteController {
     static final String REST_VOTE = "/vote";
     static final String REST_RESULTS = "/results";
 
+    static final String VOTE_NOT_FOUND = "Vote not found";
+
     @Autowired
     private VoteService voteService;
 
@@ -50,7 +53,7 @@ public class VoteController {
     public Integer getVotesForRestaurantId(@PathVariable int restaurantId, @RequestParam @Nullable LocalDate date) {
         log.info("get votes for restaurant id={} for date={}", restaurantId, date);
         date = Objects.requireNonNullElseGet(date, LocalDate::now);
-        return voteRepository.getCountVotesByRestaurantIdAndDate(restaurantId, date);
+        return voteRepository.getCountVotesByRestaurantIdAndDate(restaurantId, date).orElse(0);
     }
 
     @GetMapping(value = REST_RESULTS, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,6 +69,7 @@ public class VoteController {
         log.info("get restaurant for date={} for user={}", date, authUser);
         date = Objects.requireNonNullElseGet(date, LocalDate::now);
         Optional<Restaurant> restaurantOptional = restaurantRepository.getByDateAndUserId(date, authUser.getUser().getId());
-        return restaurantOptional.map(RestaurantUtil::convertFromRestaurant).orElse(null);
+        return restaurantOptional.map(RestaurantUtil::convertFromRestaurant)
+                .orElseThrow(() -> new IllegalRequestDataException(VOTE_NOT_FOUND));
     }
 }

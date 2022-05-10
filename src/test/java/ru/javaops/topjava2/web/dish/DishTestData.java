@@ -5,6 +5,8 @@ import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.web.MatcherFactory;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.restaurant1;
@@ -41,7 +43,8 @@ public class DishTestData {
     public static final Dish dish9 = new Dish(DISH9_ID, "Пельмени классические", TODAY, 100000);
     public static final Dish dish10 = new Dish(DISH10_ID, "Пельмени классические", TODAY, 75000);
 
-    public static final Set<Dish> menu1 = Set.of(dish1, dish2, dish3, dish4);
+//    public static final Set<Dish> menu1 = Set.of(dish1, dish2, dish3, dish4);
+    public static final LinkedHashSet<Dish> menu1 = new LinkedHashSet<>(Arrays.asList(dish1, dish2, dish3, dish4));
     public static final Set<Dish> menu2 = Set.of(dish5, dish6, dish7);
     public static final Set<Dish> menu3 = Set.of(dish8, dish9, dish10);
 

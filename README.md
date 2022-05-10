@@ -1,7 +1,7 @@
-[Проект TopJava-2](https://javaops.ru/view/topjava2)
+[Project TopJava-2](https://javaops.ru/view/topjava2)
 ===============================
 
-#### Разбор решения [выпускного проекта TopJava](https://github.com/JavaOPs/topjava/blob/master/graduation.md)
+#### Solution review [graduate project TopJava](https://github.com/JavaOPs/topjava/blob/master/graduation.md)
 The task is:
 
 Build a voting system for deciding where to have lunch.
@@ -19,7 +19,8 @@ Build a voting system for deciding where to have lunch.
 Description API:
 
 There are two roles: Admin and User, which configured for specific paths:
-- /api/profile/** - for Users
+- /api/profile/** - User's profile
+- /api/** - for Users (except path: /api/admin/**)
 - /api/admin/** - for Admins
  
 Paths:
@@ -33,7 +34,7 @@ Paths:
 - Run: `mvn spring-boot:run` in root directory.
 -----------------------------------------------------
 [REST API documentation](http://localhost:8080/swagger-ui.html)  
-Креденшелы:
+Credentials:
 ```
 User:  user@yandex.ru / password
 Admin: admin@gmail.com / admin

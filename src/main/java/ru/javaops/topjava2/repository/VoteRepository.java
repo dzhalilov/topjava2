@@ -6,6 +6,7 @@ import ru.javaops.topjava2.model.Vote;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 public interface VoteRepository extends BaseRepository<Vote> {
@@ -18,7 +19,7 @@ public interface VoteRepository extends BaseRepository<Vote> {
     List<Object[]> findAllRestaurantsAndCountByDateOrderByQuantityDescAndRestaurantId(LocalDate date);
 
     @Query("select COUNT (v.restaurant.id) from Vote v where v.restaurant.id =?1 and v.date =?2 group by v.restaurant.id")
-    Integer getCountVotesByRestaurantIdAndDate(int restaurantId, LocalDate date);
+    Optional<Integer> getCountVotesByRestaurantIdAndDate(int restaurantId, LocalDate date);
 
     @Query("select v from Vote v where v.date =?1 order by v.id")
     List<Vote> findAllByDate(LocalDate date);

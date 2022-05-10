@@ -125,6 +125,16 @@ class VoteControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = USER_MAIL)
+    void getVotesForRestaurantWithOutVotes() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID + REST_VOTES)
+                .param("date", LocalDate.now().toString()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().string("0"));
+    }
+
+    @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getRestaurantThatVotedFor() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + REST_VOTE)
