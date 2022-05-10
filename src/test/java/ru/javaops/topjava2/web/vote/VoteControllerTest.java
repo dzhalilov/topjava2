@@ -40,7 +40,7 @@ class VoteControllerTest extends AbstractControllerTest {
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, TODAY.toLocalDate());
         Vote expected = getVote();
         expected.setId(actual.getId());
-        assertEquals(expected, actual);
+        VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size() + 1, voteRepository.count());
     }
 
@@ -50,14 +50,14 @@ class VoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.post(REST_URL + WRONG_RESTAURANT_ID + REST_VOTES))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-        assertEquals(votes, voteRepository.findAll());
+        VOTE_MATCHER.assertMatch(voteRepository.findAll(), votes);
     }
 
     @Test
     void voteByAnonymous() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT3_ID))
                 .andExpect(status().isUnauthorized());
-        assertEquals(votes, voteRepository.findAll());
+        VOTE_MATCHER.assertMatch(voteRepository.findAll(), votes);
     }
 
     @Test
@@ -71,7 +71,7 @@ class VoteControllerTest extends AbstractControllerTest {
                     .andExpect(status().isOk());
         }
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
-        assertEquals(expected, actual);
+        VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size(), voteRepository.count());
     }
 
@@ -85,7 +85,7 @@ class VoteControllerTest extends AbstractControllerTest {
                     .andExpect(status().isPreconditionFailed());
         }
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate());
-        assertEquals(expected, actual);
+        VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size(), voteRepository.count());
     }
 
@@ -100,7 +100,7 @@ class VoteControllerTest extends AbstractControllerTest {
                     .andExpect(status().isOk());
         }
         Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
-        assertEquals(expected, actual);
+        VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size(), voteRepository.count());
     }
 

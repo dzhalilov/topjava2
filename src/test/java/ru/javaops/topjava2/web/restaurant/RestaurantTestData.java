@@ -8,6 +8,8 @@ import static ru.javaops.topjava2.web.dish.DishTestData.*;
 
 public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class);
+    public static final MatcherFactory.Matcher<Restaurant> RESTAURANT_MATCHER_WITH_MENU =
+            MatcherFactory.usingIgnoringFieldsComparator(Restaurant.class, "vote", "menu.restaurant");
     public static final MatcherFactory.Matcher<RestaurantTo> RESTAURANT_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(RestaurantTo.class);
 
     public static final int RESTAURANT1_ID = 1;

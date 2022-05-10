@@ -15,6 +15,8 @@ import static ru.javaops.topjava2.web.user.UserTestData.user;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<ResultTo> RESULT_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(ResultTo.class);
+    public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER =
+            MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user.password", "user.registered", "restaurant.menu", "restaurant.vote");
 
     public static final LocalDateTime TODAY = LocalDateTime.now();
     public static final LocalDateTime DATE_TIME_BEFORE_ELEVEN = LocalDateTime.of(2022, 4, 4, 10, 50);
