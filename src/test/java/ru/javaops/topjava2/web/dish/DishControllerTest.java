@@ -143,7 +143,7 @@ class DishControllerTest extends AbstractControllerTest {
     void deleteWithWrongId() throws Exception {
         perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT1_ID + DISHES + DISH5_ID))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isUnprocessableEntity());
         assertTrue(dishRepository.findById(DISH5_ID).isPresent());
     }
 }

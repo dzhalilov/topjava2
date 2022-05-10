@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static ru.javaops.topjava2.util.validation.ValidationUtil.checkModification;
+
 @Transactional(readOnly = true)
 public interface DishRepository extends BaseRepository<Dish> {
 
@@ -18,15 +20,12 @@ public interface DishRepository extends BaseRepository<Dish> {
     @Query("select d from Dish d where d.id = ?1 and d.restaurant.id = ?2")
     Optional<Dish> findByIdAndAndRestaurantId(int id, int restaurantId);
 
-    List<Dish> findAllByDate(LocalDate date);
-
     @Transactional
     @Modifying
     @Query("delete from Dish d where d.id =?1 and d.restaurant.id = ?2")
-    void deleteByIdAndRestaurantId(int id, int restaurantId);
+    int deleteByIdAndRestaurantId(int id, int restaurantId);
 
-//    @Transactional
-//    @Modifying
-//    @Query("update Dish d set d.name =: name, d.price =: price, d.date =: dishDate where d.id =: id and d.restaurant.id =: restaurantId")
-//    void updateDish(int id, int restaurantId, String name, int price, LocalDate dishDate);
+    default void deleteExisted(int id, int restaurantId) {
+        checkModification(deleteByIdAndRestaurantId(id, restaurantId), id, restaurantId);
+    }
 }

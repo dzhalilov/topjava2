@@ -100,7 +100,8 @@ public class RestaurantController extends AbstractRestaurantController {
     public void update(@Valid @RequestBody RestaurantTo restaurantTo, @PathVariable int id) {
         log.info("update {} with id={}", restaurantTo, id);
         assureIdConsistent(restaurantTo, id);
-        Restaurant restaurant = restaurantRepository.getById(id);
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
         restaurantRepository.save(RestaurantUtil.updateFromTo(restaurant, restaurantTo));
     }
 }

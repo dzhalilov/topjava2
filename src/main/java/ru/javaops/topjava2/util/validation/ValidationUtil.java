@@ -30,6 +30,12 @@ public class ValidationUtil {
         }
     }
 
+    public static void checkModification(int count, int id, int restaurantId) {
+        if (count == 0) {
+            throw new IllegalRequestDataException("Entity with id=" + id + " not found or not belong Entity id=" + restaurantId);
+        }
+    }
+
     //  https://stackoverflow.com/a/65442410/548473
     @NonNull
     public static Throwable getRootCause(@NonNull Throwable t) {

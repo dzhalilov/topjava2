@@ -105,6 +105,6 @@ public class DishController {
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     public void delete(@PathVariable int restaurantId, @PathVariable int id) {
         log.info("delete dish id={} for restaurant id={}", id, restaurantId);
-        dishRepository.deleteByIdAndRestaurantId(id, restaurantId);
+        dishRepository.deleteExisted(id, restaurantId);
     }
 }

@@ -37,7 +37,7 @@ class VoteControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT2_ID + REST_VOTES))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, TODAY.toLocalDate());
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, TODAY.toLocalDate()).orElseThrow();
         Vote expected = getVote();
         expected.setId(actual.getId());
         VOTE_MATCHER.assertMatch(actual, expected);
@@ -63,14 +63,14 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void revoteBeforeEleven() throws Exception {
-        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
+        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate()).orElseThrow();
         expected.setRestaurant(restaurant3);
         try (MockedStatic<LocalDateTime> dateTimeMockedStatic = Mockito.mockStatic(LocalDateTime.class)) {
             dateTimeMockedStatic.when(LocalDateTime::now).thenReturn(DATE_TIME_BEFORE_ELEVEN);
             perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT3_ID + REST_VOTES))
                     .andExpect(status().isOk());
         }
-        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate());
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_BEFORE_ELEVEN.toLocalDate()).orElseThrow();
         VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size(), voteRepository.count());
     }
@@ -78,13 +78,13 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void revoteAfterEleven() throws Exception {
-        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate());
+        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate()).orElseThrow();
         try (MockedStatic<LocalDateTime> dateTimeMockedStatic = Mockito.mockStatic(LocalDateTime.class)) {
             dateTimeMockedStatic.when(LocalDateTime::now).thenReturn(DATE_TIME_AFTER_ELEVEN);
             perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT3_ID + REST_VOTES))
                     .andExpect(status().isPreconditionFailed());
         }
-        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate());
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_AFTER_ELEVEN.toLocalDate()).orElseThrow();
         VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size(), voteRepository.count());
     }
@@ -92,14 +92,14 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void revoteOnBoundary() throws Exception {
-        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
+        Vote expected = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate()).orElseThrow();
         expected.setRestaurant(restaurant3);
         try (MockedStatic<LocalDateTime> dateTimeMockedStatic = Mockito.mockStatic(LocalDateTime.class)) {
             dateTimeMockedStatic.when(LocalDateTime::now).thenReturn(DATE_TIME_ELEVEN);
             perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT3_ID + REST_VOTES))
                     .andExpect(status().isOk());
         }
-        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate());
+        Vote actual = voteRepository.findByUserIdAndDate(USER_ID, DATE_TIME_ELEVEN.toLocalDate()).orElseThrow();
         VOTE_MATCHER.assertMatch(actual, expected);
         assertEquals(votes.size(), voteRepository.count());
     }
