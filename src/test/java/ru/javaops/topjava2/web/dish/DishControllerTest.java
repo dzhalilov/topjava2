@@ -94,7 +94,10 @@ class DishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createWithWrongRestaurantId() throws Exception {
-        perform(MockMvcRequestBuilders.post(REST_URL + WRONG_RESTAURANT_ID + DISHES))
+        DishTo newDishTo = DishTestData.getNew();
+        perform(MockMvcRequestBuilders.post(REST_URL + WRONG_RESTAURANT_ID + DISHES)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(newDishTo)))
                 .andExpect(status().isUnprocessableEntity());
     }
 

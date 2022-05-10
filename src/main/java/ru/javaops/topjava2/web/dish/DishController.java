@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.topjava2.error.IllegalRequestDataException;
 import ru.javaops.topjava2.model.Dish;
@@ -65,19 +64,14 @@ public class DishController {
         return convertFromDish(dish);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping
     @Transactional
     @CacheEvict(cacheNames = "dishes", allEntries = true)
     public ResponseEntity<DishTo> create(@Valid @RequestBody DishTo dishTo, @PathVariable int restaurantId) {
         log.info("create {} for restaurant id={}", dishTo, restaurantId);
         if (!restaurantRepository.existsById(restaurantId)) {
-            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, RESTAURANT_NOT_FOUND);
+            throw new IllegalRequestDataException(RESTAURANT_NOT_FOUND);
         }
-//        Restaurant restaurant = restaurantRepository.findById(restaurantId)
-//                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
-//        if (restaurant.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//        }
         Restaurant restaurant = new Restaurant();
         restaurant.setId(restaurantId);
         Dish dish = createNewFromTo(dishTo);

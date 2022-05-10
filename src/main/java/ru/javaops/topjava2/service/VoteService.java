@@ -60,7 +60,6 @@ public class VoteService {
     public List<ResultTo> findAllByDateWithVotes(LocalDate date) {
         return restaurantRepository.findAllByDateWithVotes(date)
                 .stream()
-                .peek(o -> System.out.println(o[0] + " " + o[1] + " " + o[2] + " " + o[3] + " " + o[4]))
                 .map(o -> new ResultTo((Integer) o[0], (String) o[1], (String) o[2], (String) o[3],
                         o[4] != null ? ((BigInteger) o[4]).longValue() : 0L))
                 .toList();
