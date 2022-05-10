@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.javaops.topjava2.model.Dish;
 import ru.javaops.topjava2.model.Restaurant;
 import ru.javaops.topjava2.model.User;
 import ru.javaops.topjava2.model.Vote;
@@ -13,15 +12,13 @@ import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.repository.VoteRepository;
 import ru.javaops.topjava2.to.ResultTo;
-import ru.javaops.topjava2.util.ResultUtil;
 
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,22 +34,6 @@ public class VoteService {
         this.voteRepository = voteRepository;
         this.restaurantRepository = restaurantRepository;
         this.dishRepository = dishRepository;
-    }
-
-    public List<ResultTo> getAll(LocalDate date) {
-        Map<Integer, List<Dish>> restaurantsMenuMap = dishRepository.findAllByDate(date)
-                .stream()
-                .collect(Collectors.groupingBy(dish -> dish.getRestaurant().getId(), Collectors.toList()));
-        Map<Integer, Long> votes = voteRepository.findAllRestaurantsAndCountByDateOrderByQuantityDescAndRestaurantId(date)
-                .stream()
-                .collect(Collectors.toMap(v -> (Integer) (v[0]), v -> (Long) v[1]));
-        return restaurantRepository.findAllAndOrderByName()
-                .stream()
-                .map(r -> {
-                    r.setMenu(restaurantsMenuMap.getOrDefault(r.id(), List.of()));
-                    return ResultUtil.convertFromRestaurantAndVote(r, votes.get(r.getId()));
-                })
-                .toList();
     }
 
     @Transactional
@@ -77,22 +58,11 @@ public class VoteService {
     }
 
     public List<ResultTo> findAllByDateWithVotes(LocalDate date) {
-        Map<Integer, Long> restaurantsVoteMap = voteRepository.findAllByDate(date)
+        return restaurantRepository.findAllByDateWithVotes(date)
                 .stream()
-                .collect(Collectors.groupingBy(v -> v.getRestaurant().getId(), Collectors.counting()));
-        return restaurantRepository.findAll()
-                .stream()
-                .map(r -> ResultUtil.convertFromRestaurantAndVote(r, restaurantsVoteMap.getOrDefault(r.id(), 0L)))
-                .sorted((rt1, rt2) -> (rt2.getVotes()).compareTo(rt1.getVotes()))
+                .peek(o -> System.out.println(o[0] + " " + o[1] + " " + o[2] + " " + o[3] + " " + o[4]))
+                .map(o -> new ResultTo((Integer) o[0], (String) o[1], (String) o[2], (String) o[3],
+                        o[4] != null ? ((BigInteger) o[4]).longValue() : 0L))
                 .toList();
     }
-
-//    public List<ResultTo> findAllByDateWithVotes(LocalDate date) {
-//        return restaurantRepository.findAllByDateWithVotes(date)
-//                .stream()
-//                .peek(System.out::println)
-//                .map(o -> new ResultTo((Restaurant) o[0], (Long) o[1]))
-//                .toList();
-//    }
-// select id, name, address, telephone, Quantity from RESTAURANTS LEFT JOIN ( select RESTAURANT_ID , COUNT(RESTAURANT_ID )  AS Quantity FROM VOTES GROUP BY RESTAURANT_ID ) VOTES_custom ON VOTES_custom.RESTAURANT_ID = RESTAURANTS.ID;
 }

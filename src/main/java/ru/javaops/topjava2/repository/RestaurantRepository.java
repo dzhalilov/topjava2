@@ -14,12 +14,10 @@ public interface RestaurantRepository extends BaseRepository<Restaurant> {
     @Query("select r from Restaurant r order by r.name")
     List<Restaurant> findAllAndOrderByName();
 
-    // correct count, but show just exist vote  @Query("select r, COUNT(r.id) as Quantity from Restaurant r left join Vote v on r.id = v.restaurant.id where v.date =?1 group by r.id order by Quantity DESC")
-    @Query("SELECT r, count(v.id) as Quantity from Restaurant r left join r.vote v where v.date =?1 group by r.id order by Quantity desc ")
-//    @Query("select r, COUNT(r) as Quantity from Restaurant r join r.vote group by r order by Quantity DESC")
-//    @Query("select r, COUNT (r.id) as Quantity from Restaurant r where (select count(v.restaurant.id) from Vote v where v.date =?1 group by v.restaurant.id) >= 0 order by Quantity DESC")
-// count all votes  @Query("select r, count (r.id) as Quantity from Restaurant r left join Vote v on r.id = v.restaurant.id where (select count(v.restaurant.id) from Vote v where v.date =?1 group by v.restaurant.id) >= 0 group by r.id order by Quantity desc ")
-// count rest id    @Query("select r, count (r.id) as Quantity from Restaurant r left join Vote v on r.id = v.restaurant.id and v.date =?1 group by r.id order by Quantity desc ")
+    @Query(value = "SELECT id, name, address, telephone, Quantity FROM restaurant " +
+            "LEFT JOIN (SELECT restaurant_id, COUNT(restaurant_id) AS Quantity FROM vote " +
+            "WHERE vote_date=?1 GROUP BY restaurant_id) VOTES_custom ON VOTES_custom.restaurant_id = restaurant.ID " +
+            "ORDER BY Quantity DESC, name", nativeQuery = true)
     List<Object[]> findAllByDateWithVotes(LocalDate date);
 
     @Query("select r from Restaurant r left join r.vote v where v.date =?1 and v.user.id =?2")
