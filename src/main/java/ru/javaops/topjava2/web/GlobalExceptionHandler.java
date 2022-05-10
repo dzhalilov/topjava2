@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,6 +31,8 @@ import static org.springframework.boot.web.error.ErrorAttributeOptions.Include.M
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "User with this email already exists";
+    public static final String EXCEPTION_DUPLICATE_RESTAURANT_NAME = "Restaurant with this name already exists";
+    public static final String EXCEPTION_DUPLICATE_DISH_DATE_NAME = "Dish in this date with this name already exists";
 
     private final ErrorAttributes errorAttributes;
 
@@ -57,6 +61,27 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> persistException(WebRequest request, EntityNotFoundException ex) {
         log.error("EntityNotFoundException: {}", ex.getMessage());
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> persistUniqException(WebRequest request, DataIntegrityViolationException ex) {
+        log.error("Data Integrity Violation Exception: {}", ex.getMessage());
+        String msg = ex.getMessage();
+        if (StringUtils.hasLength(msg)) {
+            msg = msg.toLowerCase();
+            if (msg.contains("uniq_name_date")) {
+                msg = EXCEPTION_DUPLICATE_DISH_DATE_NAME;
+            } else if (msg.contains("uniq_name")) {
+                msg = EXCEPTION_DUPLICATE_RESTAURANT_NAME;
+            } else if (msg.contains("uniq_email")) {
+                msg = EXCEPTION_DUPLICATE_EMAIL;
+            } else {
+                msg = "Unknown date error";
+            }
+        } else {
+            msg = "Unknown date error";
+        }
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.defaults(), msg), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     private ResponseEntity<Object> handleBindingErrors(BindingResult result, WebRequest request) {

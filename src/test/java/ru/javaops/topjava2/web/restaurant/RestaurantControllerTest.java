@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.restaurant;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import ru.javaops.topjava2.repository.RestaurantRepository;
 import ru.javaops.topjava2.to.RestaurantTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
+import ru.javaops.topjava2.web.GlobalExceptionHandler;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -129,6 +131,16 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(getNewWithWrongData())))
                 .andExpect(status().isUnprocessableEntity());
         assertEquals(count, restaurantRepository.count());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createWithNotUniqueName() throws Exception {
+        perform(MockMvcRequestBuilders.post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getNotUniqueName())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(Matchers.containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_RESTAURANT_NAME)));
     }
 
     @Test

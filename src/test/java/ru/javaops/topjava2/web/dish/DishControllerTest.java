@@ -1,5 +1,6 @@
 package ru.javaops.topjava2.web.dish;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,6 +12,7 @@ import ru.javaops.topjava2.repository.DishRepository;
 import ru.javaops.topjava2.to.DishTo;
 import ru.javaops.topjava2.util.JsonUtil;
 import ru.javaops.topjava2.web.AbstractControllerTest;
+import ru.javaops.topjava2.web.GlobalExceptionHandler;
 
 import java.util.Objects;
 
@@ -99,6 +101,16 @@ class DishControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDishTo)))
                 .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
+    void createWithNotUniqueDateAndName() throws Exception {
+        perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT1_ID + DISHES)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(getWithNotUniqueDateAndName())))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().string(Matchers.containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_DISH_DATE_NAME)));
     }
 
     @Test

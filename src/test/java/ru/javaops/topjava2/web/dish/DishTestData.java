@@ -49,6 +49,10 @@ public class DishTestData {
         return new DishTo(null, "New", TODAY, 99900);
     }
 
+    public static DishTo getWithNotUniqueDateAndName() {
+        return new DishTo(null, dish1.getName(), TODAY, 99900);
+    }
+
     public static DishTo getNewWithWrongData() {
         return new DishTo(null, "N", TODAY, 99900);
     }

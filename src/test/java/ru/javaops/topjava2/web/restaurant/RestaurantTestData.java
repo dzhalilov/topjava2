@@ -33,6 +33,10 @@ public class RestaurantTestData {
         return new Restaurant(null, "New", "", "555-55-55");
     }
 
+    public static Restaurant getNotUniqueName() {
+        return new Restaurant(null, "Metropol", "Москва12", "(555) 555-55-77");
+    }
+
     public static Restaurant getUpdated() {
         return new Restaurant(RESTAURANT1_ID, "UpdatedName", "newAddress", "new phone");
     }
