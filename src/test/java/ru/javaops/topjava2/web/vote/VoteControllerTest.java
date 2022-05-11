@@ -25,7 +25,6 @@ import static ru.javaops.topjava2.web.vote.VoteTestData.*;
 class VoteControllerTest extends AbstractControllerTest {
     private final String REST_URL = VoteController.REST_URL + '/';
     private final String REST_VOTES = VoteController.REST_VOTES;
-    private final String REST_VOTE = VoteController.REST_VOTE;
     private final String REST_RESULTS = VoteController.REST_RESULTS;
 
     @Autowired
@@ -137,7 +136,7 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void getRestaurantThatVotedFor() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + REST_VOTE)
+        perform(MockMvcRequestBuilders.get(REST_URL + REST_VOTES)
                 .param("date", LocalDate.now().toString()))
                 .andExpect(status().isOk())
                 .andDo(print())

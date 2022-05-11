@@ -20,7 +20,6 @@ public class RestaurantTestData {
     public static final Restaurant restaurant2 = new Restaurant(RESTAURANT2_ID, "Пельменная", "Москва", "+7-999-888-77-66", menu2);
     public static final Restaurant restaurant3 = new Restaurant(RESTAURANT3_ID, "Big fish", "пр.Ленина, 1", "(555) 555-55-55", menu3);
 
-
     public static final RestaurantTo restaurantTo1 = new RestaurantTo(RESTAURANT1_ID, "Metropol", "Volgograd", "123-456");
     public static final RestaurantTo restaurantTo2 = new RestaurantTo(RESTAURANT2_ID, "Пельменная", "Москва", "+7-999-888-77-66");
     public static final RestaurantTo restaurantTo3 = new RestaurantTo(RESTAURANT3_ID, "Big fish", "пр.Ленина, 1", "(555) 555-55-55");

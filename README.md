@@ -24,13 +24,18 @@ There are two roles: Admin and User, which configured for specific paths:
 - /api/admin/** - for Admins
  
 Paths:
-- /api/admin/users - get / put / update / delete Users
-- /api/profile - get / delete / register / update User's profile
-- /api/admin/restaurants - getAll / getById / put / update / delete Restaurants
-- /api/admin/restaurants/{restaurant_id}/dishes - getAll / getById / put / update / delete Dishes for Restaurant
+- /api/admin/users - get / put / update / delete Users (for Admin)
+- /api/profile - get / delete / register / update User's profile 
+- /api/admin/restaurants - getAll / getById / put / update / delete Restaurants (for Admin)
+- /api/admin/restaurants/{restaurant_id}/dishes - getAll / getById / put / update / delete Dishes for Restaurant (for Admin)
 - /api/profile/votes - vote for Restaurant / get all Restaurants with menu and votes
+- /api/restaurants/ - getAll / getById / getWithMenu (for User)
+- /api/restaurants/votes - get restaurant that voted for (for User)
+- /api/admin/restaurants/{restaurant_id}/votes - vote for restaurant / count votes for restaurant (for User)
+- /api/restaurants/result_list - get all restaurants with votes on specific date  
+- 
 -------------------------------------------------------------
-- Stack: [JDK 17](http://jdk.java.net/17/), Spring Boot 2.5, Lombok, H2, Caffeine Cache, Swagger/OpenAPI 3.0, Mapstruct, Liquibase 
+- Stack: [JDK 17](http://jdk.java.net/17/), Spring Boot 2.5, Spring Data JPA, Spring Security, Lombok, H2, Caffeine Cache, Swagger/OpenAPI 3.0
 - Run: `mvn spring-boot:run` in root directory.
 -----------------------------------------------------
 [REST API documentation](http://localhost:8080/swagger-ui.html)  

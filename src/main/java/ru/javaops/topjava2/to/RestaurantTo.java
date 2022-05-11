@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.javaops.topjava2.util.validation.NoHtml;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -15,9 +16,11 @@ import javax.validation.constraints.Size;
 public class RestaurantTo extends NamedTo {
 
     @NotBlank
-    @Size(max = 100)
+    @NoHtml
+    @Size(max = 255)
     private String address;
 
+    @NoHtml
     @Size(max = 20)
     private String telephone;
 

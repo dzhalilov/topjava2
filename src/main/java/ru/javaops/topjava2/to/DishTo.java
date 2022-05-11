@@ -18,6 +18,7 @@ public class DishTo extends NamedTo {
     @NotNull
     private LocalDate date;
 
+    @NotNull
     @PositiveOrZero
     private int price;
 

@@ -35,8 +35,7 @@ public class VoteController {
 
     static final String REST_URL = "/api/restaurants";
     static final String REST_VOTES = "/votes";
-    static final String REST_VOTE = "/vote";
-    static final String REST_RESULTS = "/results";
+    static final String REST_RESULTS = "/results-list";
 
     static final String VOTE_NOT_FOUND = "Vote not found";
 
@@ -86,7 +85,7 @@ public class VoteController {
         return voteService.findAllByDateWithVotes(date);
     }
 
-    @GetMapping(value = REST_VOTE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = REST_VOTES, produces = MediaType.APPLICATION_JSON_VALUE)
     public RestaurantTo getRestaurantThatUserVotedFor(@RequestParam @Nullable LocalDate date,
                                                       @AuthenticationPrincipal AuthUser authUser) {
         log.info("get restaurant for date={} for user={}", date, authUser);

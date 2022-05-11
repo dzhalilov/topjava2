@@ -20,7 +20,6 @@ import java.util.Set;
 @Table(name = "restaurant", uniqueConstraints = {
         @UniqueConstraint(name = "uniq_name", columnNames = "name")
 })
-//@NamedEntityGraph(name = "Restaurant.menu", attributeNodes = @NamedAttributeNode("menu"))
 @Getter
 @Setter
 @NoArgsConstructor
