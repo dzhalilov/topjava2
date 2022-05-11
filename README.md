@@ -1,4 +1,4 @@
-[Project TopJava-2](https://javaops.ru/view/topjava2)
+[Project TopJava-2](https://restaurants-api-34.herokuapp.com/api)
 ===============================
 
 #### Solution review [graduate project TopJava](https://github.com/JavaOPs/topjava/blob/master/graduation.md)
