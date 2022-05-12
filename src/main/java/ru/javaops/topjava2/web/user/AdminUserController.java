@@ -3,7 +3,6 @@ package ru.javaops.topjava2.web.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,13 +26,6 @@ import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 public class AdminUserController extends AbstractUserController {
 
     static final String REST_URL = "/api/admin/users";
-
-    @Override
-    @GetMapping("/{id}")
-    @Cacheable
-    public ResponseEntity<User> get(@PathVariable int id) {
-        return super.get(id);
-    }
 
     @Override
     @DeleteMapping("/{id}")

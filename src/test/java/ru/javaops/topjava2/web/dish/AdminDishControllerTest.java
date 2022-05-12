@@ -21,12 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.util.DishUtil.convertFromDish;
-import static ru.javaops.topjava2.web.dish.DishTestData.*;
+import static ru.javaops.topjava2.web.dish.AdminDishTestData.*;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.WRONG_RESTAURANT_ID;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 
-class DishControllerTest extends AbstractControllerTest {
+class AdminDishControllerTest extends AbstractControllerTest {
 
     private final String REST_URL = "/api/admin/restaurants/";
     private final String DISHES = "/dishes/";
@@ -56,18 +56,28 @@ class DishControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
+    void getAllByDate() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + DISHES))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(DISH_TO_MATCHER.contentJson(todayDishes));
+    }
+
+    @Test
+    @WithUserDetails(value = ADMIN_MAIL)
     void getWithWrongRestaurantId() throws Exception {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID + DISHES + DISH5_ID))
                 .andExpect(status().isUnprocessableEntity())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalRequestDataException))
-                .andExpect(result -> assertEquals(DishController.DISH_NOT_FOUND,
+                .andExpect(result -> assertEquals(AdminDishController.DISH_NOT_FOUND,
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
-        DishTo newDishTo = DishTestData.getNew();
+        DishTo newDishTo = AdminDishTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT1_ID + DISHES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDishTo)))
@@ -86,7 +96,7 @@ class DishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createWithWrongDataForDishTo() throws Exception {
-        DishTo newDishTo = DishTestData.getNewWithWrongData();
+        DishTo newDishTo = AdminDishTestData.getNewWithWrongData();
         perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT1_ID + DISHES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDishTo)))
@@ -96,7 +106,7 @@ class DishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void createWithWrongRestaurantId() throws Exception {
-        DishTo newDishTo = DishTestData.getNew();
+        DishTo newDishTo = AdminDishTestData.getNew();
         perform(MockMvcRequestBuilders.post(REST_URL + WRONG_RESTAURANT_ID + DISHES)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newDishTo)))
@@ -116,7 +126,7 @@ class DishControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void update() throws Exception {
-        DishTo updatedDishTo = DishTestData.getNew();
+        DishTo updatedDishTo = AdminDishTestData.getNew();
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID + DISHES + DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedDishTo)))
@@ -126,13 +136,13 @@ class DishControllerTest extends AbstractControllerTest {
         updatedDishTo.setId(DISH1_ID);
         DISH_TO_MATCHER.assertMatch(convertFromDish(dishRepository.getById(DISH1_ID)), updatedDishTo);
         DISH_TO_MATCHER.assertMatch(
-                convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(DishTestData.getUpdated()));
+                convertFromDish(dishRepository.getById(DISH1_ID)), convertFromDish(AdminDishTestData.getUpdated()));
     }
 
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void updateWithWrongDataForDishTo() throws Exception {
-        DishTo updatedDishTo = DishTestData.getNewWithWrongData();
+        DishTo updatedDishTo = AdminDishTestData.getNewWithWrongData();
         perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT1_ID + DISHES + DISH1_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedDishTo)))

@@ -21,15 +21,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javaops.topjava2.util.RestaurantUtil.convertFromRestaurant;
-import static ru.javaops.topjava2.web.dish.DishTestData.DISH1_ID;
+import static ru.javaops.topjava2.web.dish.AdminDishTestData.DISH1_ID;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.ADMIN_MAIL;
 import static ru.javaops.topjava2.web.user.UserTestData.USER_MAIL;
 
 class RestaurantControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = RestaurantController.REST_URL + '/';
-    private static final String REST_URL_FOR_USER = RestaurantController.REST_URL_FOR_USER + '/';
+    private static final String REST_URL = AdminRestaurantController.REST_URL + '/';
+    private static final String REST_URL_FOR_USER = UserRestaurantController.REST_URL_FOR_USER + '/';
     private static final String REST_URL_MENU = "/menu";
 
     @Autowired

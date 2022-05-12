@@ -18,12 +18,15 @@ public interface DishRepository extends BaseRepository<Dish> {
     List<Dish> findAllByRestaurantIdAndDate(int restaurantId, LocalDate date);
 
     @Query("select d from Dish d where d.id = ?1 and d.restaurant.id = ?2")
-    Optional<Dish> findByIdAndAndRestaurantId(int id, int restaurantId);
+    Optional<Dish> findByIdAndRestaurantId(int id, int restaurantId);
 
     @Transactional
     @Modifying
     @Query("delete from Dish d where d.id =?1 and d.restaurant.id = ?2")
     int deleteByIdAndRestaurantId(int id, int restaurantId);
+
+    @Query("select d from Dish d where d.date =?1 order by d.name")
+    List<Dish> findAllByDateAndOrderByName(LocalDate date);
 
     default void deleteExisted(int id, int restaurantId) {
         checkModification(deleteByIdAndRestaurantId(id, restaurantId), id, restaurantId);

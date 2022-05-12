@@ -2,6 +2,7 @@ package ru.javaops.topjava2.web.vote;
 
 import ru.javaops.topjava2.model.Vote;
 import ru.javaops.topjava2.to.ResultTo;
+import ru.javaops.topjava2.to.VoteTo;
 import ru.javaops.topjava2.util.ResultUtil;
 import ru.javaops.topjava2.web.MatcherFactory;
 
@@ -9,12 +10,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static ru.javaops.topjava2.util.VoteUtil.convertFromVote;
 import static ru.javaops.topjava2.web.restaurant.RestaurantTestData.*;
 import static ru.javaops.topjava2.web.user.UserTestData.admin;
 import static ru.javaops.topjava2.web.user.UserTestData.user;
 
 public class VoteTestData {
-    public static final MatcherFactory.Matcher<ResultTo> RESULT_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(ResultTo.class);
+    public static final MatcherFactory.Matcher<VoteTo> VOTE_TO_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(VoteTo.class);
     public static final MatcherFactory.Matcher<Vote> VOTE_MATCHER =
             MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user.password", "user.registered", "restaurant.menu", "restaurant.vote");
 
@@ -40,14 +42,11 @@ public class VoteTestData {
 
     public static final Vote voteToday = new Vote(VOTE7_ID, LocalDate.now(), restaurant3, admin);
 
+    public static final List<VoteTo> voteToList = List.of(convertFromVote(voteToday), convertFromVote(vote2), convertFromVote(vote4), convertFromVote(vote6));
+
     public static final List<Vote> votes = List.of(vote1, vote2, vote3, vote4, vote5, vote6, voteToday);
 
     public static Vote getVote() {
         return new Vote(null, LocalDate.now(), restaurant2, user);
     }
-
-    public static List<ResultTo> resultsWithPopulatedData = List.of(
-            ResultUtil.convertFromRestaurantAndVote(restaurant3, 1L),
-            ResultUtil.convertFromRestaurantAndVote(restaurant1, 0L),
-            ResultUtil.convertFromRestaurantAndVote(restaurant2, 0L));
 }

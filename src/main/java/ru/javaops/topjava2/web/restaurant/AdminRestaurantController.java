@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -20,68 +18,41 @@ import ru.javaops.topjava2.util.RestaurantUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 import static ru.javaops.topjava2.util.validation.ValidationUtil.assureIdConsistent;
 import static ru.javaops.topjava2.util.validation.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
 @CacheConfig(cacheNames = "restaurants")
-public class RestaurantController extends AbstractRestaurantController {
+public class AdminRestaurantController extends AbstractRestaurantController {
     static final String REST_URL = "/api/admin/restaurants";
-    static final String REST_URL_FOR_USER = "/api/restaurants";
 
     @Autowired
     private RestaurantRepository restaurantRepository;
 
-    @GetMapping(value = REST_URL + "/{id}")
-    @Cacheable
+    @GetMapping("/{id}")
     public RestaurantTo get(@PathVariable int id) {
         log.info("get restaurant {}", id);
         return super.get(id);
     }
 
-    @GetMapping(value = REST_URL_FOR_USER + "/{id}")
-    @Cacheable
-    public RestaurantTo getForUser(@PathVariable int id) {
-        log.info("get restaurant {}", id);
-        return super.get(id);
-    }
-
-    @GetMapping(value = REST_URL_FOR_USER + "/{id}/menu")
-    @Cacheable
-    public Restaurant getWithMenuForUser(@PathVariable int id, @RequestParam @Nullable LocalDate date) {
-        log.info("get restaurant {} with menu", id);
-        date = Objects.requireNonNullElseGet(date, LocalDate::now);
-        return restaurantRepository.findByIdWithMenu(id, date)
-                .orElseThrow(() -> new IllegalRequestDataException(RESTAURANT_NOT_FOUND));
-    }
-
     @CacheEvict(cacheNames = "restaurants", allEntries = true)
-    @DeleteMapping(value = REST_URL + "/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         log.info("delete restaurant {}", id);
         restaurantRepository.deleteExisted(id);
     }
 
-    @GetMapping(value = REST_URL)
-    @Cacheable
+    @GetMapping
     public List<RestaurantTo> getAll() {
         return super.getAll();
     }
 
-    @GetMapping(value = REST_URL_FOR_USER)
-    @Cacheable
-    public List<RestaurantTo> getAllForUser() {
-        return super.getAll();
-    }
-
-    @PostMapping(value = REST_URL, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @CacheEvict(cacheNames = "restaurants", allEntries = true)
     public ResponseEntity<RestaurantTo> create(@Valid @RequestBody RestaurantTo restaurantTo) {
         log.info("create {}", restaurantTo);
@@ -93,7 +64,7 @@ public class RestaurantController extends AbstractRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(RestaurantUtil.convertFromRestaurant(created));
     }
 
-    @PutMapping(value = REST_URL + "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
     @CacheEvict(cacheNames = "restaurants", allEntries = true)

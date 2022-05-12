@@ -11,12 +11,6 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface RestaurantRepository extends BaseRepository<Restaurant> {
 
-    @Query(value = "SELECT id, name, address, telephone, Quantity FROM restaurant " +
-            "LEFT JOIN (SELECT restaurant_id, COUNT(restaurant_id) AS Quantity FROM vote " +
-            "WHERE vote_date=?1 GROUP BY restaurant_id) VOTES_custom ON VOTES_custom.restaurant_id = restaurant.ID " +
-            "ORDER BY Quantity DESC, name", nativeQuery = true)
-    List<Object[]> findAllByDateWithVotes(LocalDate date);
-
     @Query("select r from Restaurant r left join r.vote v where v.date =?1 and v.user.id =?2")
     Optional<Restaurant> getByDateAndUserId(LocalDate date, Integer id);
 
